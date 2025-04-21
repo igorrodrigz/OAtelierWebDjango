@@ -1,0 +1,155 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--body-fg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .landing-container {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .landing-header {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .landing-description {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        .cta-button:hover {
+            background-color: var(--link-hover-color);
+            color: #fff;
+        }
+
+        .cta-button.clicked {
+            transform: scale(0.98);
+            box-shadow: 0 0 0 2px #fff, 0 0 10px var(--primary-color);
+        }
+
+        .contact-info {
+            margin-top: 40px;
+            font-size: 1rem;
+        }
+
+        .section {
+            padding: 50px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .gallery, .testimonials, .portfolio {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .gallery img, .portfolio img {
+            width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .testimonial {
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .gallery img, .portfolio img {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+    <h1 class="landing-header" data-aos="fade-down">Bem-vindo ao Atelier Recriar</h1>
+    <p class="landing-description" data-aos="fade-up">
+        Transformamos ideias em realidade! Entre em contato conosco para saber mais sobre nossos serviços e como podemos ajudar você.
+    </p>
+    <a href="https://wa.me/5591999999999?text=Olá%20Atelier%20Recriar,%20gostaria%20de%20saber%20mais%20sobre%20seus%20serviços!"
+       target="_blank"
+       class="cta-button">
+        Fale Conosco pelo WhatsApp
+    </a>
+    <div class="contact-info" data-aos="fade-up">
+        <p>Telefone: (91) 99999-9999</p>
+        <p>Email: contato@atelierrecriar.com</p>
+    </div>
+</div>
+
+<div class="section" id="fotos">
+    <h2 class="section-title" data-aos="fade-up">Galeria de Fotos</h2>
+    <div class="gallery" data-aos="zoom-in">
+        <img src="{% static 'images/foto1.jpg' %}" alt="Projeto 1">
+        <img src="{% static 'images/foto2.jpg' %}" alt="Projeto 2">
+        <img src="{% static 'images/foto3.jpg' %}" alt="Projeto 3">
+    </div>
+</div>
+
+<div class="section" id="depoimentos">
+    <h2 class="section-title" data-aos="fade-up">O que nossos clientes dizem</h2>
+    <div class="testimonials" data-aos="fade-right">
+        <div class="testimonial">"O trabalho foi impecável. Recomendo demais o Atelier!" – Maria</div>
+        <div class="testimonial">"Ficamos encantados com a qualidade e atenção aos detalhes!" – João</div>
+        <div class="testimonial">"Um atendimento maravilhoso e produtos incríveis." – Fernanda</div>
+    </div>
+</div>
+
+<div class="section" id="portfolio">
+    <h2 class="section-title" data-aos="fade-up">Nosso Portfólio</h2>
+    <div class="portfolio" data-aos="fade-left">
+        <img src="{% static 'images/portfolio1.jpg' %}" alt="Portfólio 1">
+        <img src="{% static 'images/portfolio2.jpg' %}" alt="Portfólio 2">
+        <img src="{% static 'images/portfolio3.jpg' %}" alt="Portfólio 3">
+    </div>
+</div>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+
+    document.querySelectorAll('.cta-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.add('clicked');
+            setTimeout(() => btn.classList.remove('clicked'), 300);
+        });
+    });
+</script>
+{% endblock %}
