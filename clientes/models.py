@@ -9,7 +9,7 @@ class Clientes(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     telefone = models.CharField(max_length=15)
     data_cadastro = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=12, choices=[('Em andamento', 'Em andamento'), ('Finalizado', 'Finalizado')], default='Em andamento')
+    status = models.CharField(max_length=12, choices=[('em aberto', 'Em Aberto'), ('Finalizado', 'Finalizado')], default='Em andamento')
     data_atualizacao = models.DateTimeField(auto_now=True)
 
     def __str__(self):

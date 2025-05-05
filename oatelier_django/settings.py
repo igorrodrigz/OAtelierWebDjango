@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '193.203.175.175', 'atelier-5pos.onrender.com']
+ALLOWED_HOSTS = ['168.231.99.141', '192.168.0.30', 'localhost', '193.203.175.175', 'atelier-5pos.onrender.com']
 
 
 # Application definition
