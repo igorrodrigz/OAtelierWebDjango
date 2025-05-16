@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html'), name='index'),
     path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
+    path('gerador/', TemplateView.as_vieww(template_name='gerador.html'), name='gerador'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
