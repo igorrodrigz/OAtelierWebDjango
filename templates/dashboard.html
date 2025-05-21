@@ -38,7 +38,7 @@
     </form>
 
     <hr class="my-5">
-    <h3 class="text-center mb-3">Gráficos Avançados</h3>
+    <h3 class="text-center mb-3">Gráficos de Desempenho </h3>
 
     <div class="row">
         <div class="col-md-6 mb-4">
@@ -65,17 +65,17 @@
     const lineChart = new Chart(document.getElementById('lineChart'), {
         type: 'line',
         data: {
-            labels: {{ entrada_labels|safe|escapejs }},
+            labels: {{ entrada_labels|safe|escapejs|json_script:"entrada_labels" }},
             datasets: [
                 {
                     label: 'Entradas',
-                    data: {{ entrada_data|safe|escapejs }},
+                    data: {{ entrada_data|safe|escapejs|json_script:"entrada_data" }},
                     borderColor: 'green',
                     fill: false
                 },
                 {
                     label: 'Saídas',
-                    data: {{ saida_data|safe|escapejs }},
+                    data: {{ saida_data|safe|escapejs|json_script:"saida_data" }},
                     borderColor: 'red',
                     fill: false
                 }

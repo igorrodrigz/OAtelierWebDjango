@@ -1,0 +1,210 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/8381/8381998.png">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+    
+{% endblock %}
+
+{% block content %}
+<body>
+    <main>
+        <form id="formulario">
+            <h3>Preencha os campos abaixo para gerar seu Orçamento.</h3> 
+            <label for="empresa">Selecione a empresa:</label>
+            <select id="empresa" name="empresa" default="Atelier Recriar" required>
+                <option value="Atelier Recriar">Atelier Recriar</option> 
+                <option value="Rudnick Móveis Planejados">Rudnick</option>
+                <option value="Marcenaria - Recriar">Marcenaria</option>
+            </select>
+            <br>
+
+            <label for="logo">Carregue seu Logo aqui:</label>
+            <input type="file" id="logo" accept="image/*">
+            <br>
+
+            <label for="nome">Nome do Cliente:</label>
+            <input type="text" id="nome" placeholder="Digite o nome do cliente" required>
+            <br>
+
+            <label for="telefone">Telefone/Whatsapp:</label>
+            <input type="text" id="telefone" placeholder="Digite o número do contato" required>
+            <br>
+
+            <label for="producao">Prazo de Produção:</label>
+            <input type="date" id="producao" required>
+            <br>
+
+            <label for="entrega">Prazo de Entrega:</label>
+            <input type="date" id="entrega" required>
+            <br>
+
+            <label for="quantidade">Quantidade:</label>
+            <input type="text" id="quantidade" placeholder="Descreva a quantidade do pedido" required>
+            <br>
+
+            <label for="acabamento">Acabamento:</label>
+            <input type="text" id="acabamento" placeholder="Descreva o acabamento das peças" required>
+            <br>
+
+            <label for="valor">Valor:</label>
+            <input type="text" id="valor" placeholder="Digite o valor do serviço" required>
+            <br>
+
+            <label for="pagamento">Status do Pagamento:</label>
+            <input type="text" id="pagamento" placeholder="Descreva o status do pagamento" required>
+            <br>
+
+            <label for="img">Imagem do item:</label>
+            <input type="file" id="img" multiple>
+            <br>
+
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" rows="5" maxlength="450" placeholder="Digite uma descrição ou observação"></textarea>
+            <br>
+
+            <button type="button" onclick="gerarPDF()">Gerar PDF</button>
+</form>
+
+<script>
+async function gerarPDF() {
+    const empresa = document.getElementById('empresa').value;
+    const nome = document.getElementById('nome').value;
+    const telefone = document.getElementById('telefone').value;
+    const producao = document.getElementById('producao').value;
+    const entrega = document.getElementById('entrega').value;
+    const quantidade = document.getElementById('quantidade').value;
+    const acabamento = document.getElementById('acabamento').value;
+    const valor = document.getElementById('valor').value;
+    const pagamento = document.getElementById('pagamento').value;
+    const descricao = document.getElementById('descricao').value;
+    const imgInput = document.getElementById('img');
+    const logoInput = document.getElementById('logo');
+
+    const producaoFormatada = new Date(producao).toLocaleDateString('pt-BR');
+    const entregaFormatada = new Date(entrega).toLocaleDateString('pt-BR');
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    async function processarImagens(files) {
+        const promises = [];
+        for (const file of files) {
+            const reader = new FileReader();
+            const promise = new Promise((resolve, reject) => {
+                reader.onload = (event) => resolve({ data: event.target.result });
+                reader.onerror = (err) => reject(err);
+            });
+            reader.readAsDataURL(file);
+            promises.push(promise);
+        }
+        return Promise.all(promises);
+    }
+
+    // Função para carregar logo padrão
+    async function carregarLogo(caminho) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/png'));
+            };
+            img.onerror = (err) => reject(err);
+            img.src = caminho;
+        });
+    }
+
+    try {
+        // Carregar a logo personalizada ou padrão
+        let logo;
+        if (logoInput.files.length > 0) {
+            const reader = new FileReader();
+            logo = await new Promise((resolve, reject) => {
+                reader.onload = (event) => resolve(event.target.result);
+                reader.onerror = (err) => reject(err);
+                reader.readAsDataURL(logoInput.files[0]);
+            });
+        } else {
+            logo = await carregarLogo("{% static 'logo_atelier.png' %}");
+        }
+
+        // Carregar a imagem de fundo corretamente
+        const backgroundDataUrl = await carregarLogo("{% static 'background.png' %}");
+        const background = new Image();
+        background.crossOrigin = "Anonymous";
+        background.onload = async function() {
+            pdf.addImage(background, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+            pdf.addImage(logo, 'PNG', 10, 10, 30, 30);
+            
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(20);
+            pdf.text(`Orçamento ${empresa}`, 45, 20);
+
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(14);
+            pdf.text(`Nome: ${nome}`, 45, 30);
+            pdf.text(`Telefone: ${telefone}`, 120, 30);
+            pdf.text(`Prazo de Produção: ${producaoFormatada}`, 45, 35);
+            pdf.text(`Prazo de Entrega: ${entregaFormatada}`, 120, 35);
+            pdf.text(`Quantidade: ${quantidade}`, 10, 50);
+            pdf.text(`Acabamento: ${acabamento}`, 10, 59);
+            pdf.text(`Status Pagamento: ${pagamento}`, 10, 68);
+            pdf.text(`Valor: ${valor}`, 10, 77);
+            pdf.text("Descrição:", 10, 86);
+            pdf.text(descricao || "Nenhuma descrição fornecida.", 40, 86, { maxWidth: 150 });
+
+            // Imagens do item em grid
+            let yPosition = 90 + (descricao ? Math.ceil(descricao.length / 90) * 10 : 10);
+            if (imgInput.files.length > 0) {
+                const imagens = await processarImagens(imgInput.files);
+                const imgWidth = 50;
+                const imgHeight = 50;
+                const margin = 10;
+                let xPosition = 10;
+                let imagesInRow = 0;
+
+                imagens.forEach((img) => {
+                    pdf.addImage(img.data, 'PNG', xPosition, yPosition, imgWidth, imgHeight);
+                    xPosition += imgWidth + margin;
+                    imagesInRow++;
+                    if (imagesInRow === 3) {
+                        xPosition = 10;
+                        yPosition += imgHeight + margin;
+                        imagesInRow = 0;
+                    }
+                });
+                yPosition += imgHeight + margin;
+            }
+
+            // Rodapé
+            const rodapeTexto = "Atelier Recriar - Planejar Criar e Realizar";
+            const rodapeData = `Gerado em ${new Date().toLocaleDateString()} às ${new Date().toLocaleTimeString()}. Desenvolvido por MR Solutions.`;
+            pdf.setFontSize(10);
+            pdf.text(rodapeTexto, 10, yPosition);
+            yPosition += 5;
+            pdf.text(rodapeData, 10, yPosition);
+
+            // Salvar PDF
+            pdf.save(`Ordem_de_servico_${empresa}_${nome}.pdf`);
+        };
+        background.src = backgroundDataUrl;
+    } catch (error) {
+        alert("Erro ao carregar background no PDF: " + error.message);
+    }
+}
+</script>
+
+
+{% endblock %}
+

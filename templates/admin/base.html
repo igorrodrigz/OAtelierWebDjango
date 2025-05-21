@@ -74,7 +74,7 @@
         {% block breadcrumbs %}
           <div class="breadcrumbs">
             <a href="{% url 'admin:index' %}">Acessar Sistema |</a>
-            <a href="https://tech.mrsolutions.dev.br/gerador_orcamento.html">Emitir Orçamentos |</a>
+            <a href="{% url 'gerador' %}">Emitir Orçamentos |</a>
             <a href="https://tech.mrsolutions.dev.br/conversor.html">Converter Preço (BR$ - > AR$)</a>
             {% if title %} &rsaquo; {{ title }}{% endif %}
           </div>
