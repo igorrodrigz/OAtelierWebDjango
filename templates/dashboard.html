@@ -37,12 +37,127 @@
         <button type="submit" class="btn btn-primary ml-3">Filtrar</button>
     </form>
 
-    <hr class="my-5">
-    <h3 class="text-center mb-3">Gráficos de Desempenho </h3>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Entradas (Receitas)</h5>
+                    <p class="card-text display-6 text-success">R$ {{ total_entradas|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Saídas (Despesas)</h5>
+                    <p class="card-text display-6 text-danger">R$ {{ total_saidas|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Saldo do Mês</h5>
+                    <p class="card-text display-6 {% if saldo_mes >= 0 %}text-success{% else %}text-danger{% endif %}">R$ {{ saldo_mes|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>Principais Receitas</h5>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Recebido por</th></tr></thead>
+                <tbody>
+                {% for e in principais_entradas %}
+                <tr><td>{{ e.descricao }}</td><td>R$ {{ e.valor|floatformat:2 }}</td><td>{{ e.data }}</td><td>{{ e.categoria }}</td><td>{{ e.recebido_por }}</td></tr>
+                {% empty %}<tr><td colspan="5">Nenhuma entrada</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h5>Principais Despesas</h5>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Pago por</th></tr></thead>
+                <tbody>
+                {% for s in principais_saidas %}
+                <tr><td>{{ s.descricao }}</td><td>R$ {{ s.valor|floatformat:2 }}</td><td>{{ s.data }}</td><td>{{ s.categoria }}</td><td>{{ s.pago_por }}</td></tr>
+                {% empty %}<tr><td colspan="5">Nenhuma saída</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>Contas a Pagar</h5>
+            <p>Pendentes: <b>R$ {{ total_pagar_pendentes|floatformat:2 }}</b> | Pagas: <b>R$ {{ total_pagar_pagas|floatformat:2 }}</b> | % Pagas: <b>{{ pct_pagas|floatformat:0 }}%</b></p>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Categoria</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for c in proximas_pagar %}
+                <tr><td>{{ c.descricao }}</td><td>R$ {{ c.valor|floatformat:2 }}</td><td>{{ c.data_vencimento }}</td><td>{{ c.categoria }}</td><td>{% if c.pago %}Pago{% else %}Pendente{% endif %}</td></tr>
+                {% empty %}<tr><td colspan="5">Nenhuma conta próxima</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h5>Contas a Receber</h5>
+            <p>Pendentes: <b>R$ {{ total_receber_pendentes|floatformat:2 }}</b> | Recebidas: <b>R$ {{ total_receber_recebidas|floatformat:2 }}</b> | % Recebidas: <b>{{ pct_recebidas|floatformat:0 }}%</b></p>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Categoria</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for c in proximas_receber %}
+                <tr><td>{{ c.descricao }}</td><td>R$ {{ c.valor|floatformat:2 }}</td><td>{{ c.data_vencimento }}</td><td>{{ c.categoria }}</td><td>{% if c.recebido %}Recebido{% else %}Pendente{% endif %}</td></tr>
+                {% empty %}<tr><td colspan="5">Nenhuma conta próxima</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>Contas a Pagar por Categoria</h5>
+            <ul>
+                {% for cat in pagar_por_categoria %}
+                <li>{{ cat.categoria }}: {{ cat.qtd }}</li>
+                {% empty %}<li>Nenhuma categoria</li>{% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h5>Contas a Receber por Categoria</h5>
+            <ul>
+                {% for cat in receber_por_categoria %}
+                <li>{{ cat.categoria }}: {{ cat.qtd }}</li>
+                {% empty %}<li>Nenhuma categoria</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>Alertas: Contas a Pagar vencendo em breve</h5>
+            <ul>
+                {% for c in vencendo_pagar %}
+                <li>{{ c.descricao }} - R$ {{ c.valor|floatformat:2 }} - Vence em {{ c.data_vencimento }}</li>
+                {% empty %}<li>Nenhuma conta vencendo em breve</li>{% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h5>Alertas: Contas a Receber vencendo em breve</h5>
+            <ul>
+                {% for c in vencendo_receber %}
+                <li>{{ c.descricao }} - R$ {{ c.valor|floatformat:2 }} - Vence em {{ c.data_vencimento }}</li>
+                {% empty %}<li>Nenhuma conta vencendo em breve</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="text-center mb-3">Gráficos de Desempenho</h3>
     <div class="row">
         <div class="col-md-6 mb-4">
-            <h5 class="text-center">📊 Entradas vs Saídas (Mensal)</h5>
+            <h5 class="text-center">📊 Entradas vs Saídas (Evolução Anual)</h5>
             <canvas id="lineChart"></canvas>
         </div>
         <div class="col-md-6 mb-4">
@@ -56,64 +171,73 @@
     </div>
 </div>
 
-
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    // Line chart: Entradas vs Saídas
-    const lineChart = new Chart(document.getElementById('lineChart'), {
-        type: 'line',
-        data: {
-            labels: {{ entrada_labels|safe|escapejs|json_script:"entrada_labels" }},
-            datasets: [
-                {
-                    label: 'Entradas',
-                    data: {{ entrada_data|safe|escapejs|json_script:"entrada_data" }},
-                    borderColor: 'green',
-                    fill: false
-                },
-                {
-                    label: 'Saídas',
-                    data: {{ saida_data|safe|escapejs|json_script:"saida_data" }},
-                    borderColor: 'red',
-                    fill: false
-                }
-            ]
-        }
-    });
+    // Só executa se os elementos existirem
+    function getJsonScript(id) {
+        const el = document.getElementById(id);
+        return el ? JSON.parse(el.textContent) : [];
+    }
+    const entradaLabels = getJsonScript('entrada_labels');
+    const entradaData = getJsonScript('entrada_data');
+    const saidaData = getJsonScript('saida_data');
+    const servicosLabels = getJsonScript('servicos_labels');
+    const servicosData = getJsonScript('servicos_data');
 
+    // Line chart: Entradas vs Saídas
+    if (entradaLabels.length && entradaData.length && saidaData.length) {
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: entradaLabels,
+                datasets: [
+                    {
+                        label: 'Entradas',
+                        data: entradaData,
+                        borderColor: 'green',
+                        fill: false
+                    },
+                    {
+                        label: 'Saídas',
+                        data: saidaData,
+                        borderColor: 'red',
+                        fill: false
+                    }
+                ]
+            }
+        });
+    }
     // Bar chart: Contas Pendentes
-    const barChart = new Chart(document.getElementById('barChart'), {
+    new Chart(document.getElementById('barChart'), {
         type: 'bar',
         data: {
             labels: ['Contas a Pagar', 'Contas a Receber'],
             datasets: [{
                 label: 'Pendentes',
-                data: ["{{ pagar }}", "{{ receber }}"],
+                data: [Number('{{ total_pagar_pendentes|floatformat:2 }}'), Number('{{ total_receber_pendentes|floatformat:2 }}')],
                 backgroundColor: ['#dc3545', '#28a745']
             }]
         }
     });
-
     // Doughnut chart: Status dos Serviços
-    const pieChart = new Chart(document.getElementById('pieChart'), {
-        type: 'doughnut',
-        data: {
-            labels: [{% for s in servicos %}"{{ s.status|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
-            datasets: [{
-                data: [{% for s in servicos %}{{ s.qtd }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: ['#007bff', '#ffc107', '#17a2b8', '#dc3545', '#28a745']
-            }]
-        }
-    });
-
+    if (servicosLabels.length && servicosData.length) {
+        new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: servicosLabels,
+                datasets: [{
+                    data: servicosData,
+                    backgroundColor: ['#007bff', '#ffc107', '#17a2b8', '#dc3545', '#28a745', '#6f42c1', '#fd7e14', '#20c997', '#343a40']
+                }]
+            }
+        });
+    }
     // LocalStorage para lembrar filtros
     document.querySelector('form').addEventListener('submit', () => {
         localStorage.setItem('mesSelecionado', document.getElementById('mes').value);
         localStorage.setItem('anoSelecionado', document.getElementById('ano').value);
     });
-
     window.onload = () => {
         const mes = localStorage.getItem('mesSelecionado');
         const ano = localStorage.getItem('anoSelecionado');
@@ -121,4 +245,9 @@
         if (ano) document.getElementById('ano').value = ano;
     };
 </script>
+{{ entrada_labels|json_script:"entrada_labels" }}
+{{ entrada_data|json_script:"entrada_data" }}
+{{ saida_data|json_script:"saida_data" }}
+{{ servicos_labels|json_script:"servicos_labels" }}
+{{ servicos_data|json_script:"servicos_data" }}
 {% endblock %}

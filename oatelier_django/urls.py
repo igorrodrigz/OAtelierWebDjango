@@ -15,16 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, reverse_lazy
-from django.views.generic import TemplateView
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from oatelier_django.views import dashboard
+from django.shortcuts import render
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html'), name='index'),
-    path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
-    path('gerador/', TemplateView.as_view(template_name='gerador.html'), name='gerador'),
+    path('', dashboard, name='index'),
+    path('dashboard/', dashboard, name='dashboard'),
+    path('gerador/', admin.site.admin_view(lambda request: render(request, 'gerador.html')), name='gerador'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
