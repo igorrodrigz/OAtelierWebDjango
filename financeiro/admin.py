@@ -2,28 +2,39 @@ from django.contrib import admin
 from .models import Entrada, Saida, ContaPagar, ContaReceber
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
-from .models import Entrada, Saida, ContaPagar, ContaReceber
-from import_export.formats.base_formats import XLSX
 
+# Resources
+class EntradaResource(resources.ModelResource):
+    class Meta:
+        model = Entrada
 
-# Register your models here.
-@admin.register(Entrada)
-class EntradaAdmin(admin.ModelAdmin):
-    list_display = ('descricao', 'valor', 'data', 'categoria', 'recebido_por', 'criado_em', 'atualizado_em')
-    search_fields = ('descricao', 'categoria')
-    list_filter = ('data', 'categoria')
-
-
-@admin.register(Saida)
-class SaidaAdmin(admin.ModelAdmin):
-    list_display = ('descricao', 'valor', 'data', 'categoria', 'pago_por', 'criado_em', 'atualizado_em')
-    search_fields = ('descricao', 'categoria')
-    list_filter = ('data', 'categoria')
+class SaidaResource(resources.ModelResource):
+    class Meta:
+        model = Saida
 
 class ContaPagarResource(resources.ModelResource):
     class Meta:
         model = ContaPagar
         fields = ('id', 'descricao', 'valor', 'data_vencimento', 'categoria', 'pago', 'criado_em', 'atualizado_em')
+
+class ContaReceberResource(resources.ModelResource):
+    class Meta:
+        model = ContaReceber
+
+# Admins
+@admin.register(Entrada)
+class EntradaAdmin(ImportExportModelAdmin):
+    resource_class = EntradaResource
+    list_display = ('descricao', 'valor', 'data', 'categoria', 'recebido_por', 'criado_em', 'atualizado_em')
+    search_fields = ('descricao', 'categoria')
+    list_filter = ('data', 'categoria')
+
+@admin.register(Saida)
+class SaidaAdmin(ImportExportModelAdmin):
+    resource_class = SaidaResource
+    list_display = ('descricao', 'valor', 'data', 'categoria', 'pago_por', 'criado_em', 'atualizado_em')
+    search_fields = ('descricao', 'categoria')
+    list_filter = ('data', 'categoria')
 
 @admin.register(ContaPagar)
 class ContaPagarAdmin(ImportExportModelAdmin):
@@ -33,9 +44,8 @@ class ContaPagarAdmin(ImportExportModelAdmin):
     list_filter = ('data_vencimento', 'categoria', 'pago')
 
 @admin.register(ContaReceber)
-class ContaReceberAdmin(admin.ModelAdmin):
+class ContaReceberAdmin(ImportExportModelAdmin):
+    resource_class = ContaReceberResource
     list_display = ('descricao', 'valor', 'data_vencimento', 'categoria', 'recebido', 'criado_em', 'atualizado_em')
     search_fields = ('descricao', 'categoria')
     list_filter = ('data_vencimento', 'categoria', 'recebido')
-
-
