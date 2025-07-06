@@ -1,0 +1,143 @@
+# Guia de Consultas e Análises de Dados - OAtelierWebDjango
+
+Este documento apresenta exemplos de queries e análises que podem ser realizadas no banco de dados do sistema OAtelierWebDjango, considerando os principais modelos: Clientes, Serviços, Financeiro (Entradas, Saídas, Contas a Pagar, Contas a Receber).
+
+---
+
+## 1. Clientes
+- **Listar todos os clientes:**
+  ```sql
+  SELECT * FROM clientes_clientes;
+  ```
+- **Buscar clientes cadastrados em um período:**
+  ```sql
+  SELECT * FROM clientes_clientes WHERE data_cadastro BETWEEN '2025-01-01' AND '2025-06-30';
+  ```
+- **Clientes ativos/inativos:**
+  ```sql
+  SELECT * FROM clientes_clientes WHERE status = 'em aberto';
+  SELECT * FROM clientes_clientes WHERE status = 'Finalizado';
+  ```
+- **Buscar clientes por nome, email ou telefone:**
+  ```sql
+  SELECT * FROM clientes_clientes WHERE nome LIKE '%João%' OR email LIKE '%@gmail.com%' OR telefone LIKE '%9999%';
+  ```
+
+---
+
+## 2. Serviços
+- **Listar todos os serviços:**
+  ```sql
+  SELECT * FROM servicos_servicos;
+  ```
+- **Serviços por status:**
+  ```sql
+  SELECT status, COUNT(*) FROM servicos_servicos GROUP BY status;
+  ```
+- **Serviços de um cliente específico:**
+  ```sql
+  SELECT * FROM servicos_servicos WHERE cliente_id = 1;
+  ```
+- **Serviços em andamento ou finalizados:**
+  ```sql
+  SELECT * FROM servicos_servicos WHERE status = 'em andamento';
+  SELECT * FROM servicos_servicos WHERE status = 'finalizado';
+  ```
+- **Serviços por período de entrada:**
+  ```sql
+  SELECT * FROM servicos_servicos WHERE data_entrada BETWEEN '2025-01-01' AND '2025-06-30';
+  ```
+- **Valor total de serviços por mês:**
+  ```sql
+  SELECT strftime('%Y-%m', data_entrada) as mes, SUM(valor) FROM servicos_servicos GROUP BY mes;
+  ```
+
+---
+
+## 3. Financeiro
+### Entradas (Receitas)
+- **Total de entradas por mês:**
+  ```sql
+  SELECT strftime('%Y-%m', data) as mes, SUM(valor) FROM financeiro_entrada GROUP BY mes;
+  ```
+- **Entradas por categoria:**
+  ```sql
+  SELECT categoria, SUM(valor) FROM financeiro_entrada GROUP BY categoria;
+  ```
+- **Entradas em um período:**
+  ```sql
+  SELECT * FROM financeiro_entrada WHERE data BETWEEN '2025-01-01' AND '2025-06-30';
+  ```
+
+### Saídas (Despesas)
+- **Total de saídas por mês:**
+  ```sql
+  SELECT strftime('%Y-%m', data) as mes, SUM(valor) FROM financeiro_saida GROUP BY mes;
+  ```
+- **Saídas por categoria:**
+  ```sql
+  SELECT categoria, SUM(valor) FROM financeiro_saida GROUP BY categoria;
+  ```
+- **Saídas em um período:**
+  ```sql
+  SELECT * FROM financeiro_saida WHERE data BETWEEN '2025-01-01' AND '2025-06-30';
+  ```
+
+### Contas a Pagar
+- **Contas a pagar pendentes:**
+  ```sql
+  SELECT * FROM financeiro_contapagar WHERE pago = 0;
+  ```
+- **Contas a pagar entre datas:**
+  ```sql
+  SELECT * FROM financeiro_contapagar WHERE data_vencimento BETWEEN '2025-07-01' AND '2025-07-31';
+  ```
+- **Total de contas pagas e pendentes:**
+  ```sql
+  SELECT pago, COUNT(*) FROM financeiro_contapagar GROUP BY pago;
+  ```
+
+### Contas a Receber
+- **Contas a receber pendentes:**
+  ```sql
+  SELECT * FROM financeiro_contareceber WHERE recebido = 0;
+  ```
+- **Contas a receber entre datas:**
+  ```sql
+  SELECT * FROM financeiro_contareceber WHERE data_vencimento BETWEEN '2025-07-01' AND '2025-07-31';
+  ```
+- **Total de contas recebidas e pendentes:**
+  ```sql
+  SELECT recebido, COUNT(*) FROM financeiro_contareceber GROUP BY recebido;
+  ```
+
+---
+
+## 4. Relatórios e Indicadores
+- **Saldo financeiro do mês:**
+  ```sql
+  SELECT (
+    (SELECT SUM(valor) FROM financeiro_entrada WHERE strftime('%Y-%m', data) = '2025-07') -
+    (SELECT SUM(valor) FROM financeiro_saida WHERE strftime('%Y-%m', data) = '2025-07')
+  ) AS saldo_mes;
+  ```
+- **Resumo de contas a pagar e receber para o mês:**
+  ```sql
+  SELECT SUM(valor) FROM financeiro_contapagar WHERE strftime('%Y-%m', data_vencimento) = '2025-07';
+  SELECT SUM(valor) FROM financeiro_contareceber WHERE strftime('%Y-%m', data_vencimento) = '2025-07';
+  ```
+- **Clientes com mais serviços:**
+  ```sql
+  SELECT cliente_id, COUNT(*) as total_servicos FROM servicos_servicos GROUP BY cliente_id ORDER BY total_servicos DESC;
+  ```
+
+---
+
+## 5. Dicas
+- Use filtros de data, status, categoria e cliente para análises detalhadas.
+- Para bancos MySQL, troque `strftime` por `DATE_FORMAT`.
+- Para relatórios avançados, utilize ferramentas como Django Admin, django-import-export, ou conecte BI (Power BI, Metabase, etc.) ao banco.
+
+---
+
+**Este guia pode ser expandido conforme novas necessidades de análise e relatórios.**
