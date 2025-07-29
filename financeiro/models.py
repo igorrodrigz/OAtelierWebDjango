@@ -27,6 +27,7 @@ class Saida(models.Model):
     
 class ContaPagar(models.Model):
     descricao = models.CharField(max_length=255)
+    documento = models.CharField(max_length=255, default='', blank=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data_vencimento = models.DateField()
     categoria = models.CharField(max_length=50)
@@ -39,6 +40,7 @@ class ContaPagar(models.Model):
     
 class ContaReceber(models.Model):
     descricao = models.CharField(max_length=255)
+    documento = models.CharField(max_length=255, default='', blank=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data_vencimento = models.DateField()
     categoria = models.CharField(max_length=50)
