@@ -18,11 +18,7 @@
         <form id="formulario">
             <h3>Preencha os campos abaixo para gerar seu Orçamento.</h3> 
             <label for="empresa">Selecione a empresa:</label>
-            <select id="empresa" name="empresa" default="Atelier Recriar" required>
-                <option value="Atelier Recriar">Atelier Recriar</option> 
-                <option value="Rudnick Móveis Planejados">Rudnick</option>
-                <option value="Marcenaria - Recriar">Marcenaria</option>
-            </select>
+            <input type="text" id="empresa" placeholder="Digite o nome da empresa" value="MR Solutions" required>
             <br>
 
             <label for="logo">Carregue seu Logo aqui:</label>
@@ -188,7 +184,7 @@ async function gerarPDF() {
             }
 
             // Rodapé
-            const rodapeTexto = "Atelier Recriar - Planejar Criar e Realizar";
+            const rodapeTexto = "Sistema Atelier - MR Solutions";
             const rodapeData = `Gerado em ${new Date().toLocaleDateString()} às ${new Date().toLocaleTimeString()}. Desenvolvido por MR Solutions.`;
             pdf.setFontSize(10);
             pdf.text(rodapeTexto, 10, yPosition);

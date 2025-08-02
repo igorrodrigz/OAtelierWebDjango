@@ -14,8 +14,7 @@ class Servicos(models.Model):
     cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE, related_name='servicos', verbose_name='Cliente')
     data_entrada = models.DateField()
     data_prazo = models.DateField()
-    status = models.CharField(max_length=20, choices=[('aguardando servico', 'Aguardando Serviço'), ('em andamento', 'Em Andamento'), ('manutencao', 'Manutenção'), ('lixa', 'Lixa'),
-                                                      ('pintura', 'Pintura'), ('montagem)', 'Montagem'), ('vistoria', 'Vistoria'),('finalizado', 'Finalizado'), ('entregue', 'Entregue')])
+    status = models.CharField(max_length=20, choices=[('aguardando servico', 'Aguardando Serviço'), ('em andamento', 'Em Andamento'),('finalizado', 'Finalizado'), ('entregue', 'Entregue')])
     prioridade = models.CharField(max_length=20, choices=[('baixa', 'Baixa'), ('media', 'Média'), ('alta', 'Alta')])
     descricao = models.TextField()
     material_adicional = models.TextField(blank=True, null=True)
