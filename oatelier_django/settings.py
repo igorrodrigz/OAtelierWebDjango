@@ -81,22 +81,22 @@ WSGI_APPLICATION = 'oatelier_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': config('u123466556_oatelierdjango'),
-#        'USER': config('u123466556_djangoadmin'),
-#        'PASSWORD': config('!Barat44'),
-#        'HOST': config('193.203.175.175'),
-#        'PORT': config('3306', default='3306'),
-#    }
-#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('u123466556_goldgarage'),
+        'USER': config('u123466556_goldgarage'),
+        'PASSWORD': config('@Goldgarage123'),
+        'HOST': config('193.203.175.175'),
+        'PORT': config('3306', default='3306'),
     }
 }
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
 
 
 # Password validation
