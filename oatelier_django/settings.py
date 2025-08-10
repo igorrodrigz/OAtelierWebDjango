@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'oatelier_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('u123466556_goldgarage'),
-        'USER': config('u123466556_goldgarage'),
-        'PASSWORD': config('@Goldgarage123'),
-        'HOST': config('193.203.175.175'),
-        'PORT': config('3306', default='3306'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DA_PASSWORD'),
+        'HOST': config('DB_HOST', default='193.203.175.175'),
+        'PORT': config('DB_PORT', default='3306'),
     }
 }
 #DATABASES = {
