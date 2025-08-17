@@ -650,3 +650,4 @@ Este guia fornece uma configuração completa e segura para deploy do OAtelierWe
 5. **Documentar alterações** feitas no servidor
 
 Para suporte adicional, consulte a documentação oficial do Django, Nginx e Gunicorn.
+

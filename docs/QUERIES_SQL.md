@@ -557,3 +557,4 @@ def executar_consulta_raw():
 ---
 
 **Nota**: Estas consultas são exemplos e podem precisar de ajustes dependendo da versão específica do banco de dados e das necessidades do projeto. Sempre teste as consultas em um ambiente de desenvolvimento antes de usar em produção.
+

@@ -429,3 +429,4 @@ LOGGING = {
 ```
 
 Esta documentação fornece uma base sólida para implementar e utilizar APIs no sistema OAtelierWebDjango, seguindo as melhores práticas do Django REST Framework.
+

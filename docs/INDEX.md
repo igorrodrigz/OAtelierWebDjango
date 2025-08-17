@@ -197,3 +197,4 @@ Esta documentação fornece informações completas sobre o sistema OAtelierWebD
 **Última Atualização**: Janeiro 2025  
 **Versão da Documentação**: 1.0  
 **Mantido por**: Equipe de Desenvolvimento OAtelierWebDjango
+

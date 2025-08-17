@@ -23,9 +23,7 @@ from django.shortcuts import render
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
     path('dashboard/', dashboard, name='dashboard'),
-    path('status/', admin.site.admin_view(lambda request: render(request, 'status.html')), name='status')
     path('gerador/', admin.site.admin_view(lambda request: render(request, 'gerador.html')), name='gerador'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

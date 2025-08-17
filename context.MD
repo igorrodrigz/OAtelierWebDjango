@@ -441,3 +441,4 @@ class ClienteViewTest(TestCase):
 ---
 
 **Nota**: Este arquivo serve como contexto para o Cursor AI, fornecendo informações essenciais sobre o projeto para auxiliar no desenvolvimento e manutenção do código. Mantenha este arquivo atualizado conforme o projeto evolui.
+
