@@ -18,13 +18,14 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from oatelier_django.views import dashboard
+from oatelier_django.views import dashboard, health_check
 from django.shortcuts import render
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', dashboard, name='index'),
     path('dashboard/', dashboard, name='dashboard'),
+    path('health/', health_check, name='health_check'),  # Health check endpoint
     path('gerador/', admin.site.admin_view(lambda request: render(request, 'gerador.html')), name='gerador'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

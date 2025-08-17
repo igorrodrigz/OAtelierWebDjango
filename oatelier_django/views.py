@@ -1,9 +1,14 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.db.models import Sum, Count, Q
 from datetime import datetime, timedelta
 from servicos.models import Servicos
 from financeiro.models import Entrada, Saida, ContaPagar, ContaReceber
 import json
+
+def health_check(request):
+    """Simple health check endpoint for deployment monitoring"""
+    return HttpResponse("OK", status=200)
 
 def dashboard(request):
     # Filtros de mês/ano
