@@ -1,4 +1,4 @@
-﻿asgiref==3.8.1
+asgiref==3.8.1
 Brotli==1.1.0
 Django==5.2
 Faker==37.1.0
@@ -12,3 +12,5 @@ tzdata==2025.2
 whitenoise==6.9.0
 django-import-export==3.0.0
 uvicorn
+psycopg2-binary==2.9.9
+dj-database-url==2.3.0
