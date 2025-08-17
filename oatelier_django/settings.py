@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.100.11', '192.168.0.30','oatelier.mrsolutions.dev.br' , 'localhost', '193.203.175.175', 'atelier-5pos.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.100.11', '192.168.0.30','oatelier.mrsolutions.dev.br' , 'localhost', '193.203.175.175', 'staging-gold.onrender.com']
 
 
 # Application definition
@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'oatelier_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('u123466556_goldgarage'),
-        'USER': config('u123466556_goldgarage'),
-        'PASSWORD': config('@Goldgarage123'),
-        'HOST': config('193.203.175.175'),
-        'PORT': config('3306', default='3306'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', default='3306'),
     }
 }
 #DATABASES = {

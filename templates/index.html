@@ -9,8 +9,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: var(--body-bg);
-            color: var(--body-fg);
+            background-color: #1a1a1a;
+            color: #f5c518;
             margin: 0;
             padding: 0;
         }
@@ -23,17 +23,19 @@
         .landing-header {
             font-size: 2.5rem;
             margin-bottom: 20px;
+            color: #f5c518;
         }
 
         .landing-description {
             font-size: 1.2rem;
             margin-bottom: 30px;
+            color: #f5c518;
         }
 
         .cta-button {
             display: inline-block;
-            background-color: var(--primary-color);
-            color: #fff;
+            background-color: #f5c518;
+            color: #1a1a1a;
             padding: 15px 30px;
             font-size: 1rem;
             text-decoration: none;
@@ -42,18 +44,19 @@
         }
 
         .cta-button:hover {
-            background-color: var(--link-hover-color);
-            color: #fff;
+            background-color: #d4af37;
+            color: #1a1a1a;
         }
 
         .cta-button.clicked {
             transform: scale(0.98);
-            box-shadow: 0 0 0 2px #fff, 0 0 10px var(--primary-color);
+            box-shadow: 0 0 0 2px #1a1a1a, 0 0 10px #f5c518;
         }
 
         .contact-info {
             margin-top: 40px;
             font-size: 1rem;
+            color: #f5c518;
         }
 
         .section {
@@ -65,13 +68,7 @@
         .section-title {
             font-size: 2rem;
             margin-bottom: 30px;
-        }
-
-        .gallery, .testimonials, .portfolio {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+            color: #f5c518;
         }
 
         .gallery img, .portfolio img {
@@ -79,15 +76,17 @@
             height: 200px;
             object-fit: cover;
             border-radius: 10px;
+            border: 2px solid #f5c518;
         }
 
         .testimonial {
-            background: #f7f7f7;
+            background: #2a2a2a;
             padding: 20px;
             border-radius: 10px;
             max-width: 300px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             font-style: italic;
+            color: #f5c518;
         }
 
         @media (max-width: 768px) {
@@ -100,9 +99,9 @@
 
 {% block content %}
 <div class="landing-container">
-    <h1 class="landing-header" data-aos="fade-down">Bem-vindo ao Atelier.</h1>
+    <h1 class="landing-header" data-aos="fade-down">Bem-vindo ao Atelier Gold Garage.</h1>
     <p class="landing-description" data-aos="fade-up">
-        O Atelier é um sistema de gestão empresarial desenvolvido pela MR Solutions para atender as necessidades do seu negócio.
+        O Atelier Gold Garage é um sistema de gestão empresarial desenvolvido pela MR Solutions para atender as necessidades do seu negócio.
         Com uma interface intuitiva e recursos avançados, você pode gerenciar suas operações de forma eficiente e eficaz.
         <br>
         <br>
@@ -111,7 +110,7 @@
         Nosso time de Suporte é especialista em Atendimento Empresarial, e está sempre disponível para tirar as suas dúvidas.
     </p>
     
-    <a href="https://wa.me/5547936182994?text=Olá%20Atelier%20Recriar,%20gostaria%20de%20saber%20mais%20sobre%20seus%20serviços!"
+    <a href="https://wa.me/5547936182994?text=Olá%20Atelier%20Gold%20Garage,%20gostaria%20de%20saber%20mais%20sobre%20seus%20serviços!"
        target="_blank"
        class="cta-button">
         Fale Conosco pelo WhatsApp
