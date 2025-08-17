@@ -1,29 +1,85 @@
 /* DASHBOARD */
 .dashboard td, .dashboard th {
     word-break: break-word;
+    padding: 10px;
+    border: 1px solid #ddd;
 }
 
 .dashboard .module table th {
     width: 100%;
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: bold;
+    text-align: left;
 }
 
 .dashboard .module table td {
     white-space: nowrap;
+    text-align: left;
 }
 
 .dashboard .module table td a {
     display: block;
-    padding-right: .6em;
+    padding: 10px;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.dashboard .module table td a:hover {
+    color: #0056b3;
 }
 
 /* RECENT ACTIONS MODULE */
-
 .module ul.actionlist {
     margin-left: 0;
+    padding: 0;
+    list-style: none;
 }
 
 ul.actionlist li {
     list-style-type: none;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+ul.actionlist li:hover {
+    background-color: #f1f1f1;
+}
+
+/* GENERAL STYLING */
+.dashboard {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #333;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard h2 {
+    font-size: 1.8rem;
+    color: #007bff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.dashboard .container {
+    padding: 20px;
+}
+
+.dashboard .btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dashboard .btn-primary:hover {
+    background-color: #0056b3;
 }

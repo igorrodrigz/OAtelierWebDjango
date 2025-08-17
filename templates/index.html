@@ -7,6 +7,12 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/8381/8381998.png">
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #e75480;
+            --link-hover-color: #c2185b;
+            --body-bg: #fff0f6;
+            --body-fg: #3a003a;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: var(--body-bg);
@@ -23,6 +29,9 @@
         .landing-header {
             font-size: 2.5rem;
             margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
         .landing-description {
@@ -39,6 +48,7 @@
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s ease, transform 0.2s;
+            box-shadow: 0 2px 8px #e7548033;
         }
 
         .cta-button:hover {
@@ -82,11 +92,11 @@
         }
 
         .testimonial {
-            background: #f7f7f7;
+            background: #ffe4ec;
             padding: 20px;
             border-radius: 10px;
             max-width: 300px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px #e7548033;
             font-style: italic;
         }
 
@@ -100,9 +110,9 @@
 
 {% block content %}
 <div class="landing-container">
-    <h1 class="landing-header" data-aos="fade-down">Bem-vindo ao Atelier.</h1>
+    <h1 class="landing-header" data-aos="fade-down">Bem-vindo ao Atelier Pandora.</h1>
     <p class="landing-description" data-aos="fade-up">
-        O Atelier é um sistema de gestão empresarial desenvolvido pela MR Solutions para atender as necessidades do seu negócio.
+        O Atelier Pandora é um sistema de gestão empresarial desenvolvido pela MR Solutions para atender as necessidades do seu negócio.
         Com uma interface intuitiva e recursos avançados, você pode gerenciar suas operações de forma eficiente e eficaz.
         <br>
         <br>
@@ -111,20 +121,19 @@
         Nosso time de Suporte é especialista em Atendimento Empresarial, e está sempre disponível para tirar as suas dúvidas.
     </p>
     
-    <a href="https://wa.me/5547936182994?text=Olá%20Atelier%20Recriar,%20gostaria%20de%20saber%20mais%20sobre%20seus%20serviços!"
+    <a href="https://wa.me/5547936182994?text=Olá%20Atelier%20Pandora,%20gostaria%20de%20saber%20mais%20sobre%20seus%20serviços!"
        target="_blank"
        class="cta-button">
         Fale Conosco pelo WhatsApp
     </a>
     <div class="contact-info" data-aos="fade-up">
-    	<p>Atendimento e Suporte ao Usuário</p>
+        <p>Atendimento e Suporte ao Usuário</p>
         <p>Telefone: (47) 93618-2994</p>
         <p>Instagram: <a href="https://www.instagram.com/mr.solutionstech/" target="_blank">@MR Solutions.</a></p>
         <p>Email: desenvolvimento@mrsolutions.dev.br</p>
-    	<p>
+        <p>
     </div>
 </div>
-
 
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>

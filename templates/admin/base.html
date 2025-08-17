@@ -5,8 +5,46 @@
 <title>{% block title %}{% endblock %}</title>
 <link rel="stylesheet" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
 {% block dark-mode-vars %}
-  <link rel="stylesheet" href="{% static "admin/css/dark_mode.css" %}">
-  <script src="{% static "admin/js/theme.js" %}"></script>
+  <link rel="stylesheet" href="{% static 'admin/css/dark_mode.css' %}">
+  <script src="{% static 'admin/js/theme.js' %}"></script>
+  <style>
+    :root {
+      --primary-color: #ff69b4; /* Rosa padrão do projeto */
+      --link-hover-color: #ff1493; /* Rosa mais escuro para hover */
+      --body-bg: #fff0f5; /* Fundo claro com tom rosa */
+      --body-fg: #000000; /* Texto preto */
+    }
+
+    body {
+      background-color: var(--body-bg);
+      color: var(--body-fg);
+    }
+
+    a {
+      color: var(--primary-color);
+    }
+
+    a:hover {
+      color: var(--link-hover-color);
+    }
+
+    .breadcrumbs a {
+      color: var(--primary-color);
+    }
+
+    .breadcrumbs a:hover {
+      color: var(--link-hover-color);
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    button:hover {
+      background-color: var(--link-hover-color);
+    }
+  </style>
 {% endblock %}
 {% if not is_popup and is_nav_sidebar_enabled %}
   <link rel="stylesheet" href="{% static "admin/css/nav_sidebar.css" %}">
@@ -74,8 +112,7 @@
         {% block breadcrumbs %}
           <div class="breadcrumbs">
             <a href="{% url 'admin:index' %}">Acessar Sistema |</a>
-            <a href="{% url 'gerador' %}">Emitir Orçamentos |</a>
-            <a href="https://tech.mrsolutions.dev.br/conversor.html">Converter Preço (BR$ - > AR$)</a>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
             {% if title %} &rsaquo; {{ title }}{% endif %}
           </div>
         {% endblock %}
