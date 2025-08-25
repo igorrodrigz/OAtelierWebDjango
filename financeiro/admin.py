@@ -50,3 +50,4 @@ class ContaReceberAdmin(ImportExportModelAdmin):
     list_display = ('descricao','documento', 'valor', 'data_vencimento', 'categoria', 'recebido')
     search_fields = ('descricao', 'categoria','documento')
     list_filter = ('data_vencimento', 'categoria', 'recebido')
+
