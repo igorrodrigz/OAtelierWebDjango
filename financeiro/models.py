@@ -15,8 +15,8 @@ class Entrada(models.Model):
         return f"{self.veiculo} - {self.placa} - {self.valor} - {self.data}"
     
 class Saida(models.Model):
-    veiculo = models.CharField(max_length=255)
-    placa = models.CharField(max_length=255, default='', blank=True)
+    descricao = models.CharField(max_length=255)
+    documento = models.CharField(max_length=255, default='', blank=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data = models.DateField()
     categoria = models.CharField(max_length=50)
@@ -25,7 +25,7 @@ class Saida(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.veiculo} - {self.placa} - {self.valor} - {self.data}"
+        return f"{self.descricao} - {self.valor} - {self.valor} - {self.data}"
     
 class ContaPagar(models.Model):
     class Meta:

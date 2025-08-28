@@ -41,8 +41,8 @@ class EntradaAdmin(ImportExportModelAdmin):
 @admin.register(Saida)
 class SaidaAdmin(ImportExportModelAdmin):
     resource_class = SaidaResource
-    list_display = ('veiculo', 'placa', 'valor', 'data', 'categoria', 'pago_por', 'criado_em', 'atualizado_em')
-    search_fields = ('veiculo', 'categoria')
+    list_display = ('descricao', 'documento', 'valor', 'data', 'categoria', 'pago_por', 'criado_em', 'atualizado_em')
+    search_fields = ('descricao', 'categoria', 'documento')
     list_filter = ('data', 'categoria')
 
 @admin.register(ContaPagar)
