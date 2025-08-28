@@ -7,34 +7,42 @@ from import_export import resources
 class EntradaResource(resources.ModelResource):
     class Meta:
         model = Entrada
+        verbose_name = "Entrada"
+        verbose_name_plural = "Entradas"
 
 class SaidaResource(resources.ModelResource):
     class Meta:
         model = Saida
+        verbose_name = "Saída"
+        verbose_name_plural = "Saídas"
 
 class ContaPagarResource(resources.ModelResource):
     class Meta:
         model = ContaPagar
+        verbose_name = "Conta a Pagar"
+        verbose_name_plural = "Contas a Pagar"
         fields = ('id', 'descricao','documento', 'valor', 'data_vencimento', 'categoria', 'pago', 'criado_em', 'atualizado_em')
 
 class ContaReceberResource(resources.ModelResource):
     class Meta:
         model = ContaReceber
+        verbose_name = "Conta a Receber"
+        verbose_name_plural = "Contas a Receber"
         fields = ('id', 'descricao','documento', 'valor', 'data_vencimento', 'categoria', 'recebido', 'criado_em', 'atualizado_em')
 
 # Admins
 @admin.register(Entrada)
 class EntradaAdmin(ImportExportModelAdmin):
     resource_class = EntradaResource
-    list_display = ('descricao', 'valor', 'data', 'categoria', 'recebido_por', 'criado_em', 'atualizado_em')
-    search_fields = ('descricao', 'categoria')
+    list_display = ('veiculo', 'placa', 'valor', 'data', 'categoria', 'recebido_por', 'criado_em', 'atualizado_em')
+    search_fields = ('veiculo', 'categoria')
     list_filter = ('data', 'categoria')
 
 @admin.register(Saida)
 class SaidaAdmin(ImportExportModelAdmin):
     resource_class = SaidaResource
-    list_display = ('descricao', 'valor', 'data', 'categoria', 'pago_por', 'criado_em', 'atualizado_em')
-    search_fields = ('descricao', 'categoria')
+    list_display = ('veiculo', 'placa', 'valor', 'data', 'categoria', 'pago_por', 'criado_em', 'atualizado_em')
+    search_fields = ('veiculo', 'categoria')
     list_filter = ('data', 'categoria')
 
 @admin.register(ContaPagar)

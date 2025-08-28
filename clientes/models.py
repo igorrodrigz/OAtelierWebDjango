@@ -2,6 +2,9 @@ from django.db import models
 
 # Create your models here.
 class Clientes(models.Model):
+    class Meta:
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"
     nome = models.CharField(max_length=100)
     endereco = models.CharField(max_length=255)
     cep = models.CharField(max_length=10)
