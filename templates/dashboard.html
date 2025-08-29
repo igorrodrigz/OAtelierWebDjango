@@ -1,50 +1,48 @@
-{% extends "admin/base_site.html" %}
-{% load i18n static %}
-
+{% extends 'admin/base_site.html' %}
 {% block content %}
-<div class="container-fluid mt-4">
+<div class="container-fluid">
 
-  <!-- Seletores de Mês e Ano -->
-  <form method="get" class="row mb-4">
+  <!-- Filtros -->
+  <form method="get" class="row mb-3">
     <div class="col-md-3">
-      <select name="mes" class="form-control">
+      <select name="mes" class="form-select">
         {% for m in meses %}
           <option value="{{ m.valor }}" {% if m.valor == mes_atual %}selected{% endif %}>{{ m.nome }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="col-md-3">
-      <select name="ano" class="form-control">
+      <select name="ano" class="form-select">
         {% for a in anos %}
           <option value="{{ a }}" {% if a == ano_atual %}selected{% endif %}>{{ a }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="col-md-2">
-      <button class="btn btn-primary w-100" type="submit">Filtrar</button>
+      <button type="submit" class="btn btn-primary w-100">Filtrar</button>
     </div>
   </form>
 
-  <!-- Indicadores principais -->
-  <div class="row text-white">
+  <!-- Cards principais -->
+  <div class="row mb-4">
     <div class="col-md-2 mb-3">
-      <div class="card bg-success shadow rounded-3">
+      <div class="card text-white shadow rounded-3" style="background-color: #28a745;">
         <div class="card-body text-center">
-          <h6>Faturamento</h6>
+          <h6>Entradas</h6>
           <h4>R$ {{ total_entradas|floatformat:2 }}</h4>
         </div>
       </div>
     </div>
     <div class="col-md-2 mb-3">
-      <div class="card bg-danger shadow rounded-3">
+      <div class="card text-white shadow rounded-3" style="background-color: #dc3545;">
         <div class="card-body text-center">
-          <h6>Despesas</h6>
+          <h6>Saídas</h6>
           <h4>R$ {{ total_saidas|floatformat:2 }}</h4>
         </div>
       </div>
     </div>
     <div class="col-md-2 mb-3">
-      <div class="card bg-primary shadow rounded-3">
+      <div class="card text-white shadow rounded-3" style="background-color: #17a2b8;">
         <div class="card-body text-center">
           <h6>Saldo</h6>
           <h4>R$ {{ saldo_mes|floatformat:2 }}</h4>
@@ -52,154 +50,105 @@
       </div>
     </div>
     <div class="col-md-2 mb-3">
-      <div class="card bg-info shadow rounded-3">
+      <div class="card text-white shadow rounded-3" style="background-color: #6f42c1;">
         <div class="card-body text-center">
           <h6>Serviços</h6>
-          <h4>{{ servicos|length }}</h4>
+          <h4>{{ servicos_qtd }}</h4>
         </div>
       </div>
     </div>
     <div class="col-md-2 mb-3">
-      <div class="card bg-warning shadow rounded-3">
+      <div class="card text-white shadow rounded-3" style="background-color: #ffc107;">
         <div class="card-body text-center">
           <h6>Ticket Médio</h6>
-          <h4>—</h4>
+          {% if ticket_medio > 0 %}
+            <h4>R$ {{ ticket_medio|floatformat:2 }}</h4>
+          {% else %}
+            <h4>—</h4>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
-
+  <!-- Principais receitas e despesas -->
+  <div class="row mb-4 mt-4">
+    <div class="col-md-6">
+      <h5>Principais Receitas</h5>
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Recebido por</th></tr>
+        </thead>
+        <tbody>
+          {% for e in principais_entradas %}
+            <tr>
+              <td>{{ e.descricao|default:"—" }}</td>
+              <td>R$ {{ e.valor|floatformat:2 }}</td>
+              <td>{{ e.data }}</td>
+              <td>{{ e.categoria|default:"—" }}</td>
+              <td>{{ e.recebido_por|default:"—" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">Nenhuma entrada</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <h5>Principais Despesas</h5>
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Pago por</th></tr>
+        </thead>
+        <tbody>
+          {% for s in principais_saidas %}
+            <tr>
+              <td>{{ s.descricao|default:"—" }}</td>
+              <td>R$ {{ s.valor|floatformat:2 }}</td>
+              <td>{{ s.data }}</td>
+              <td>{{ s.categoria|default:"—" }}</td>
+              <td>{{ s.pago_por|default:"—" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">Nenhuma saída</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
   <!-- Gráficos principais -->
-  <div class="row mt-4">
-    <div class="col-md-8 mb-4">
-      <div class="card shadow rounded-3">
-        <div class="card-body">
-          <h5 class="card-title">Evolução de Entradas e Saídas</h5>
-          <canvas id="fluxoMensal"></canvas>
-        </div>
-      </div>
+  <div class="row mt-1">
+    <div class="col-md-8">
+      <canvas id="graficoEntradasSaidas"></canvas>
     </div>
-    <div class="col-md-4 mb-4">
-      <div class="card shadow rounded-3">
-        <div class="card-body">
-          <h5 class="card-title">Serviços por Status</h5>
-          <canvas id="servicosStatus"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contas a pagar/receber -->
-  <div class="row mt-4">
-    <div class="col-md-6 mb-4">
-      <div class="card shadow rounded-3">
-        <div class="card-body">
-          <h5 class="card-title">Próximas Contas a Pagar</h5>
-          <ul class="list-group list-group-flush">
-            {% for c in proximas_pagar %}
-              <li class="list-group-item d-flex justify-content-between">
-                {{ c.descricao }} <span>R$ {{ c.valor|floatformat:2 }}</span>
-              </li>
-            {% empty %}
-              <li class="list-group-item">Nenhuma conta a pagar.</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card shadow rounded-3">
-        <div class="card-body">
-          <h5 class="card-title">Próximas Contas a Receber</h5>
-          <ul class="list-group list-group-flush">
-            {% for c in proximas_receber %}
-              <li class="list-group-item d-flex justify-content-between">
-                {{ c.descricao }} <span>R$ {{ c.valor|floatformat:2 }}</span>
-              </li>
-            {% empty %}
-              <li class="list-group-item">Nenhuma conta a receber.</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Principais entradas/saídas -->
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <div class="card shadow rounded-3">
-        <div class="card-body">
-          <h5 class="card-title">Top Entradas</h5>
-          <ul class="list-group list-group-flush">
-            {% for e in principais_entradas %}
-              <li class="list-group-item d-flex justify-content-between">
-                {{ e.descricao }} <span>R$ {{ e.valor|floatformat:2 }}</span>
-              </li>
-            {% empty %}
-              <li class="list-group-item">Nenhuma entrada registrada.</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow rounded-3">
-        <div class="card-body">
-          <h5 class="card-title">Top Saídas</h5>
-          <ul class="list-group list-group-flush">
-            {% for s in principais_saidas %}
-              <li class="list-group-item d-flex justify-content-between">
-                {{ s.descricao }} <span>R$ {{ s.valor|floatformat:2 }}</span>
-              </li>
-            {% empty %}
-              <li class="list-group-item">Nenhuma saída registrada.</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+    <div class="col-md-4">
+      <canvas id="graficoServicos"></canvas>
     </div>
   </div>
 
 </div>
 
-<!-- Chart.js Scripts -->
+<!-- Scripts para os gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Evolução de entradas e saídas
-  const ctxFluxo = document.getElementById('fluxoMensal');
-  new Chart(ctxFluxo, {
+  const ctx1 = document.getElementById('graficoEntradasSaidas').getContext('2d');
+  new Chart(ctx1, {
     type: 'line',
     data: {
       labels: {{ entrada_labels|safe }},
       datasets: [
-        {
-          label: 'Entradas',
-          data: {{ entrada_data|safe }},
-          borderColor: 'green',
-          fill: false,
-          tension: 0.3
-        },
-        {
-          label: 'Saídas',
-          data: {{ saida_data|safe }},
-          borderColor: 'red',
-          fill: false,
-          tension: 0.3
-        }
+        { label: 'Entradas', data: {{ entrada_data|safe }}, borderColor: 'green', fill: false },
+        { label: 'Saídas', data: {{ saida_data|safe }}, borderColor: 'red', fill: false }
       ]
     }
   });
 
-  // Serviços por status
-  const ctxServicos = document.getElementById('servicosStatus');
-  new Chart(ctxServicos, {
+  const ctx2 = document.getElementById('graficoServicos').getContext('2d');
+  new Chart(ctx2, {
     type: 'doughnut',
     data: {
       labels: {{ servicos_labels|safe }},
       datasets: [{
-        data: {{ servicos_data|safe }},
-        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b']
+        data: {{ servicos_data|safe }}
       }]
     }
   });
