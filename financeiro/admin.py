@@ -178,7 +178,7 @@ class EntradaAdmin(admin.ModelAdmin):
     form = EntradaForm
     list_display = ('descricao', 'valor', 'data', 'categoria', 'atualizado_em')
     search_fields = ('descricao', 'categoria')
-    list_filter = ('categoria',)
+    list_filter = (MesAnoDataEntradaFilter, 'categoria')
     actions = [exportar_entradas_xlsx]
 
     def save_model(self, request, obj, form, change):
