@@ -1,0 +1,50 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<div class="container">
+  <h2>Inserção em Lote de Financeiro</h2>
+  <form method="post">
+    {% csrf_token %}
+    <h4>Entradas</h4>
+    {{ entrada_formset.management_form }}
+    <table class="table table-sm">
+      <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Recebido por</th></tr></thead>
+      <tbody>
+        {% for form in entrada_formset %}
+        <tr>{% for field in form.visible_fields %}<td>{{ field }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h4>Saídas</h4>
+    {{ saida_formset.management_form }}
+    <table class="table table-sm">
+      <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Pago por</th></tr></thead>
+      <tbody>
+        {% for form in saida_formset %}
+        <tr>{% for field in form.visible_fields %}<td>{{ field }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h4>Contas a Pagar</h4>
+    {{ contapagar_formset.management_form }}
+    <table class="table table-sm">
+      <thead><tr><th>Descrição</th><th>Documento</th><th>Valor</th><th>Data Vencimento</th><th>Categoria</th><th>Pago?</th></tr></thead>
+      <tbody>
+        {% for form in contapagar_formset %}
+        <tr>{% for field in form.visible_fields %}<td>{{ field }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h4>Contas a Receber</h4>
+    {{ contareceber_formset.management_form }}
+    <table class="table table-sm">
+      <thead><tr><th>Descrição</th><th>Documento</th><th>Valor</th><th>Data Vencimento</th><th>Categoria</th><th>Recebido?</th></tr></thead>
+      <tbody>
+        {% for form in contareceber_formset %}
+        <tr>{% for field in form.visible_fields %}<td>{{ field }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Salvar Lote</button>
+  </form>
+</div>
+{% endblock %}

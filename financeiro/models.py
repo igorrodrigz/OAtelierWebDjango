@@ -12,7 +12,10 @@ class Entrada(models.Model):
 
     def __str__(self):
         return f"{self.descricao} - {self.valor} - {self.data}"
-    
+    class Meta:
+        verbose_name = 'Entrada'
+        verbose_name_plural = 'Entradas'
+
 class Saida(models.Model):
     descricao = models.CharField(max_length=255)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
@@ -24,6 +27,7 @@ class Saida(models.Model):
 
     def __str__(self):
         return f"{self.descricao} - {self.valor} - {self.data}"
+        
     
 class ContaPagar(models.Model):
     descricao = models.CharField(max_length=255)
@@ -37,7 +41,9 @@ class ContaPagar(models.Model):
 
     def __str__(self):
         return f"{self.descricao} - {self.valor} - {self.data_vencimento}"
-    
+    class Meta:
+        verbose_name = 'Conta a Pagar'
+        verbose_name_plural = 'Contas a Pagar'
 class ContaReceber(models.Model):
     descricao = models.CharField(max_length=255)
     documento = models.CharField(max_length=255, default='', blank=True)
@@ -50,3 +56,6 @@ class ContaReceber(models.Model):
 
     def __str__(self):
         return f"{self.descricao} - {self.valor} - {self.data_vencimento}"
+    class Meta:
+        verbose_name = 'Conta a Receber'
+        verbose_name_plural = 'Contas a Receber'

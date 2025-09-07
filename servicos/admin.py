@@ -7,6 +7,8 @@ from clientes.models import Clientes
 class ServicosFotosInline(admin.TabularInline):
     model = ServicosFotos
     extra = 1
+    verbose_name = "Foto do Serviço"
+    verbose_name_plural = "Fotos do Serviço"
 @admin.register(Servicos)
 class ServicosAdmin(admin.ModelAdmin):
     list_display = ('nome_projeto', 'valor', 'data_entrada', 'status', 'data_prazo', 'cliente')

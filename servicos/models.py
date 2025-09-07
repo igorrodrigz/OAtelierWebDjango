@@ -26,6 +26,9 @@ class Servicos(models.Model):
     
     def __str__(self):
         return f'Serviço {self.id} - {self.cliente.nome}'
+    class Meta:
+        verbose_name = 'Serviço'
+        verbose_name_plural = 'Serviços'
     
 class ServicosFotos(models.Model):
     servico = models.ForeignKey(Servicos, on_delete=models.CASCADE, related_name='fotos')
@@ -34,3 +37,6 @@ class ServicosFotos(models.Model):
     
     def __str__(self):
         return f'Foto do Serviço {self.servico.id} - {self.servico.cliente.nome}'
+    class Meta:
+        verbose_name = 'Foto do Serviço'
+        verbose_name_plural = 'Fotos dos Serviços'

@@ -27,22 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '192.168.0.30',
-    '192.168.100.11',
-    'pandora.mrsolutions.dev.br',
-    'atelier-staging.onrender.com',
-    '193.203.175.175',
-    '34.213.214.55',
-    '35.164.95.156',
-    '44.226.145.213',
-    '44.229.200.200',
-    '44.230.95.183',
-    '54.187.200.255',
-]
-
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -60,6 +45,7 @@ INSTALLED_APPS = [
     'financeiro',
     'servicos',
     'import_export',
+    'rangefilter',
 ]
 
 MIDDLEWARE = [
@@ -106,6 +92,13 @@ DATABASES = {
         'PORT': config('DB_PORT', default='3306'),
     }
 }
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

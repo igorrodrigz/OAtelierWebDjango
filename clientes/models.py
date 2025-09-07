@@ -14,3 +14,6 @@ class Clientes(models.Model):
 
     def __str__(self):
         return self.nome
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'

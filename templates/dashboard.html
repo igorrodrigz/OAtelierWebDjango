@@ -1,253 +1,517 @@
-{% extends "admin/base_site.html" %}
-{% load static %}
-
-{% block extrastyle %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
-<style>
-    .form-inline select,
-    .form-inline button {
-        margin: 0 10px;
-    }
-</style>
-{% endblock %}
-
+{% extends 'admin/base_site.html' %}
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">📈 Painel de Controle Financeiro</h2>
+<div class="container-fluid py-3">
+  <!-- Filtros -->
+  <form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-6 col-md-2">
+      <label class="form-label mb-1">Mês</label>
+      <select name="mes" class="form-select form-select-sm">
+        {% for m in meses %}
+          <option value="{{ m.valor }}" {% if m.valor == mes_atual %}selected{% endif %}>{{ m.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label mb-1">Ano</label>
+      <select name="ano" class="form-select form-select-sm">
+        {% for a in anos %}
+          <option value="{{ a }}" {% if a == ano_atual %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-12 col-md-2">
+      <button type="submit" class="btn btn-primary btn-sm w-100">Filtrar</button>
+    </div>
+  </form>
 
-    <!-- Filtro por mês e ano -->
-    <form method="get" class="form-inline justify-content-center mb-5">
-        <div class="form-group mx-2">
-            <label for="mes">Mês:</label>
-            <select class="form-control ml-2" id="mes" name="mes">
-                {% for m in meses %}
-                <option value="{{ m.valor }}" {% if m.valor == mes_atual %}selected{% endif %}>{{ m.nome }}</option>
-                {% endfor %}
-            </select>
+  <!-- Cards principais -->
+  <div class="row g-2 mb-3">
+    <div class="col-6 col-md-2">
+      <div class="card border-0 shadow-sm text-center small-card-green">
+        <div class="card-body py-2 px-1">
+          <div class="fw-bold text-success">Entradas</div>
+          <div class="fs-5">R$ {{ total_entradas|floatformat:2 }}</div>
         </div>
-        <div class="form-group mx-2">
-            <label for="ano">Ano:</label>
-            <select class="form-control ml-2" id="ano" name="ano">
-                {% for ano in anos %}
-                <option value="{{ ano }}" {% if ano == ano_atual %}selected{% endif %}>{{ ano }}</option>
-                {% endfor %}
-            </select>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card border-0 shadow-sm text-center small-card-red">
+        <div class="card-body py-2 px-1">
+          <div class="fw-bold text-danger">Saídas</div>
+          <div class="fs-5">R$ {{ total_saidas|floatformat:2 }}</div>
         </div>
-        <button type="submit" class="btn btn-primary ml-3">Filtrar</button>
-    </form>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card border-0 shadow-sm text-center small-card-blue">
+        <div class="card-body py-2 px-1">
+          <div class="fw-bold text-primary">Saldo</div>
+          <div class="fs-5">R$ {{ saldo_mes|floatformat:2 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card border-0 shadow-sm text-center small-card-purple">
+        <div class="card-body py-2 px-1">
+          <div class="fw-bold text-purple">Serviços</div>
+          <div class="fs-5">{{ servicos_qtd }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="card border-0 shadow-sm text-center small-card-yellow">
+        <div class="card-body py-2 px-1">
+          <div class="fw-bold text-warning">Ticket Médio</div>
+          <div class="fs-5">{% if ticket_medio > 0 %}R$ {{ ticket_medio|floatformat:2 }}{% else %}—{% endif %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Entradas (Receitas)</h5>
-                    <p class="card-text display-6 text-success">R$ {{ total_entradas|floatformat:2 }}</p>
-                </div>
-            </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-center mb-2">Categorias de Entradas</h6>
+          {% if entrada_categorias_labels and entrada_categorias_data and entrada_categorias_labels|length > 0 %}
+            <canvas id="graficoCategoriasEntradas" height="160"></canvas>
+          {% else %}
+            <div class="text-center text-muted py-4">Sem dados</div>
+          {% endif %}
         </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Saídas (Despesas)</h5>
-                    <p class="card-text display-6 text-danger">R$ {{ total_saidas|floatformat:2 }}</p>
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-center mb-2">Categorias de Saídas</h6>
+          {% if saida_categorias_labels and saida_categorias_data and saida_categorias_labels|length > 0 %}
+            <canvas id="graficoCategoriasSaidas" height="160"></canvas>
+          {% else %}
+            <div class="text-center text-muted py-4">Sem dados</div>
+          {% endif %}
         </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Saldo do Mês</h5>
-                    <p class="card-text display-6 {% if saldo_mes >= 0 %}text-success{% else %}text-danger{% endif %}">R$ {{ saldo_mes|floatformat:2 }}</p>
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-center mb-2">Contas a Pagar (por categoria)</h6>
+          {% if pagar_por_categoria and pagar_por_categoria|length > 0 %}
+            <canvas id="graficoPagarCategoria" height="160"></canvas>
+          {% else %}
+            <div class="text-center text-muted py-4">Sem dados</div>
+          {% endif %}
         </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-center mb-2">Contas a Receber (por categoria)</h6>
+          {% if receber_por_categoria and receber_por_categoria|length > 0 %}
+            <canvas id="graficoReceberCategoria" height="160"></canvas>
+          {% else %}
+            <div class="text-center text-muted py-4">Sem dados</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-12 col-md-8">
+      <div class="card border-0 shadow-sm h-100 mb-2">
+        <div class="card-body">
+          <h6 class="text-center mb-2">Entradas x Saídas (linha)</h6>
+          <canvas id="graficoEntradasSaidas" height="100"></canvas>
+        </div>
+      </div>
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-center mb-2">Contas a Receber x Contas a Pagar (pagos)</h6>
+          <div id="graficoReceberPagarPagosWrapper">
+            <canvas id="graficoReceberPagarPagos" height="100" style="display:none;"></canvas>
+            <div id="msgSemDadosCRCP" class="text-center text-muted py-4" style="display:none;">Sem dados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-2">
+          <h6 class="text-center mb-2">Top Receitas</h6>
+          <ul class="list-group list-group-flush small">
+            {% for e in principais_entradas %}
+              <li class="list-group-item d-flex justify-content-between align-items-center px-1 py-1">
+                <span>{{ e.descricao|default:"—"|truncatechars:18 }}</span>
+                <span class="fw-bold text-success">R$ {{ e.valor|floatformat:2 }}</span>
+              </li>
+            {% empty %}
+              <li class="list-group-item">Nenhuma entrada</li>
+            {% endfor %}
+          </ul>
+          <h6 class="text-center mt-3 mb-2">Top Despesas</h6>
+          <ul class="list-group list-group-flush small">
+            {% for s in principais_saidas %}
+              <li class="list-group-item d-flex justify-content-between align-items-center px-1 py-1">
+                <span>{{ s.descricao|default:"—"|truncatechars:18 }}</span>
+                <span class="fw-bold text-danger">R$ {{ s.valor|floatformat:2 }}</span>
+              </li>
+            {% empty %}
+              <li class="list-group-item">Nenhuma saída</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h5>Principais Receitas</h5>
-            <table class="table table-sm table-striped">
-                <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Recebido por</th></tr></thead>
-                <tbody>
-                {% for e in principais_entradas %}
-                <tr><td>{{ e.descricao }}</td><td>R$ {{ e.valor|floatformat:2 }}</td><td>{{ e.data }}</td><td>{{ e.categoria }}</td><td>{{ e.recebido_por }}</td></tr>
-                {% empty %}<tr><td colspan="5">Nenhuma entrada</td></tr>{% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-6">
-            <h5>Principais Despesas</h5>
-            <table class="table table-sm table-striped">
-                <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Categoria</th><th>Pago por</th></tr></thead>
-                <tbody>
-                {% for s in principais_saidas %}
-                <tr><td>{{ s.descricao }}</td><td>R$ {{ s.valor|floatformat:2 }}</td><td>{{ s.data }}</td><td>{{ s.categoria }}</td><td>{{ s.pago_por }}</td></tr>
-                {% empty %}<tr><td colspan="5">Nenhuma saída</td></tr>{% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<style>
+.small-card-green .card-body { background: #eafaf1; }
+.small-card-red .card-body { background: #faeaea; }
+.small-card-blue .card-body { background: #eaf0fa; }
+.small-card-purple .card-body { background: #f3eafa; }
+.small-card-yellow .card-body { background: #fffbe6; }
+.text-purple { color: #6f42c1; }
+</style>
 
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h5>Contas a Pagar</h5>
-            <p>Pendentes: <b>R$ {{ total_pagar_pendentes|floatformat:2 }}</b> | Pagas: <b>R$ {{ total_pagar_pagas|floatformat:2 }}</b> | % Pagas: <b>{{ pct_pagas|floatformat:0 }}%</b></p>
-            <table class="table table-sm table-striped">
-                <thead><tr><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Categoria</th><th>Status</th></tr></thead>
-                <tbody>
-                {% for c in proximas_pagar %}
-                <tr><td>{{ c.descricao }}</td><td>R$ {{ c.valor|floatformat:2 }}</td><td>{{ c.data_vencimento }}</td><td>{{ c.categoria }}</td><td>{% if c.pago %}Pago{% else %}Pendente{% endif %}</td></tr>
-                {% empty %}<tr><td colspan="5">Nenhuma conta próxima</td></tr>{% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-6">
-            <h5>Contas a Receber</h5>
-            <p>Pendentes: <b>R$ {{ total_receber_pendentes|floatformat:2 }}</b> | Recebidas: <b>R$ {{ total_receber_recebidas|floatformat:2 }}</b> | % Recebidas: <b>{{ pct_recebidas|floatformat:0 }}%</b></p>
-            <table class="table table-sm table-striped">
-                <thead><tr><th>Descrição</th><th>Valor</th><th>Vencimento</th><th>Categoria</th><th>Status</th></tr></thead>
-                <tbody>
-                {% for c in proximas_receber %}
-                <tr><td>{{ c.descricao }}</td><td>R$ {{ c.valor|floatformat:2 }}</td><td>{{ c.data_vencimento }}</td><td>{{ c.categoria }}</td><td>{% if c.recebido %}Recebido{% else %}Pendente{% endif %}</td></tr>
-                {% empty %}<tr><td colspan="5">Nenhuma conta próxima</td></tr>{% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h5>Contas a Pagar por Categoria</h5>
-            <ul>
-                {% for cat in pagar_por_categoria %}
-                <li>{{ cat.categoria }}: {{ cat.qtd }}</li>
-                {% empty %}<li>Nenhuma categoria</li>{% endfor %}
-            </ul>
-        </div>
-        <div class="col-md-6">
-            <h5>Contas a Receber por Categoria</h5>
-            <ul>
-                {% for cat in receber_por_categoria %}
-                <li>{{ cat.categoria }}: {{ cat.qtd }}</li>
-                {% empty %}<li>Nenhuma categoria</li>{% endfor %}
-            </ul>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h5>Alertas: Contas a Pagar vencendo em breve</h5>
-            <ul>
-                {% for c in vencendo_pagar %}
-                <li>{{ c.descricao }} - R$ {{ c.valor|floatformat:2 }} - Vence em {{ c.data_vencimento }}</li>
-                {% empty %}<li>Nenhuma conta vencendo em breve</li>{% endfor %}
-            </ul>
-        </div>
-        <div class="col-md-6">
-            <h5>Alertas: Contas a Receber vencendo em breve</h5>
-            <ul>
-                {% for c in vencendo_receber %}
-                <li>{{ c.descricao }} - R$ {{ c.valor|floatformat:2 }} - Vence em {{ c.data_vencimento }}</li>
-                {% empty %}<li>Nenhuma conta vencendo em breve</li>{% endfor %}
-            </ul>
-        </div>
-    </div>
-
-    <h3 class="text-center mb-3">Gráficos de Desempenho</h3>
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <h5 class="text-center">📊 Entradas vs Saídas (Evolução Anual)</h5>
-            <canvas id="lineChart"></canvas>
-        </div>
-        <div class="col-md-6 mb-4">
-            <h5 class="text-center">📉 Contas Pendentes</h5>
-            <canvas id="barChart"></canvas>
-        </div>
-        <div class="col-md-6 offset-md-3">
-            <h5 class="text-center">🔄 Status dos Serviços</h5>
-            <canvas id="pieChart"></canvas>
-        </div>
-    </div>
-</div>
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ entrada_labels|json_script:"entrada-labels" }}
+{{ entrada_data|json_script:"entrada-data" }}
+{{ saida_data|json_script:"saida-data" }}
+{{ entrada_categorias_labels|json_script:"entrada-categorias-labels" }}
+{{ entrada_categorias_data|json_script:"entrada-categorias-data" }}
+{{ saida_categorias_labels|json_script:"saida-categorias-labels" }}
+{{ saida_categorias_data|json_script:"saida-categorias-data" }}
+{{ servicos_labels|json_script:"servicos-labels" }}
+{{ servicos_data|json_script:"servicos-data" }}
+{{ cr_pagos_labels|json_script:"cr-pagos-labels" }}
+{{ cr_pagos_data|json_script:"cr-pagos-data" }}
+{{ cp_pagos_data|json_script:"cp-pagos-data" }}
+{% if pagar_por_categoria %}
+  {{ pagar_por_categoria|json_script:"pagar-por-categoria" }}
+{% endif %}
+{% if receber_por_categoria %}
+  {{ receber_por_categoria|json_script:"receber-por-categoria" }}
+{% endif %}
 <script>
-    // Só executa se os elementos existirem
-    function getJsonScript(id) {
-        const el = document.getElementById(id);
-        return el ? JSON.parse(el.textContent) : [];
-    }
-    const entradaLabels = getJsonScript('entrada_labels');
-    const entradaData = getJsonScript('entrada_data');
-    const saidaData = getJsonScript('saida_data');
-    const servicosLabels = getJsonScript('servicos_labels');
-    const servicosData = getJsonScript('servicos_data');
+// Gráfico de linhas Entradas/Saídas
+const ctx1 = document.getElementById('graficoEntradasSaidas').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels: JSON.parse(document.getElementById('entrada-labels').textContent),
+    datasets: [
+      { label: 'Entradas', data: JSON.parse(document.getElementById('entrada-data').textContent), borderColor: '#28a745', backgroundColor: 'rgba(40,167,69,0.1)', fill: true, tension: 0.3 },
+      { label: 'Saídas', data: JSON.parse(document.getElementById('saida-data').textContent), borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', fill: true, tension: 0.3 }
+    ]
+  },
+  options: { plugins: { legend: { display: true } }, scales: { x: { display: false } } }
+});
 
-    // Line chart: Entradas vs Saídas
-    if (entradaLabels.length && entradaData.length && saidaData.length) {
-        new Chart(document.getElementById('lineChart'), {
-            type: 'line',
-            data: {
-                labels: entradaLabels,
-                datasets: [
-                    {
-                        label: 'Entradas',
-                        data: entradaData,
-                        borderColor: 'green',
-                        fill: false
-                    },
-                    {
-                        label: 'Saídas',
-                        data: saidaData,
-                        borderColor: 'red',
-                        fill: false
-                    }
-                ]
-            }
-        });
-    }
-    // Bar chart: Contas Pendentes
-    new Chart(document.getElementById('barChart'), {
-        type: 'bar',
-        data: {
-            labels: ['Contas a Pagar', 'Contas a Receber'],
-            datasets: [{
-                label: 'Pendentes',
-                data: [Number('{{ total_pagar_pendentes|floatformat:2 }}'), Number('{{ total_receber_pendentes|floatformat:2 }}')],
-                backgroundColor: ['#dc3545', '#28a745']
-            }]
-        }
+// Gráfico de linha - Contas a Receber x Contas a Pagar (pagos)
+if (document.getElementById('graficoReceberPagarPagos')) {
+  const labelsCRCP = JSON.parse(document.getElementById('cr-pagos-labels').textContent);
+  const dataCR = JSON.parse(document.getElementById('cr-pagos-data').textContent);
+  const dataCP = JSON.parse(document.getElementById('cp-pagos-data').textContent);
+  const hasData = (dataCR && dataCR.some(v => v > 0)) || (dataCP && dataCP.some(v => v > 0));
+  if (hasData) {
+    document.getElementById('graficoReceberPagarPagos').style.display = '';
+    new Chart(document.getElementById('graficoReceberPagarPagos').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: labelsCRCP,
+        datasets: [
+          { label: 'Recebido', data: dataCR, borderColor: '#28a745', backgroundColor: 'rgba(40,167,69,0.1)', fill: true, tension: 0.3 },
+          { label: 'Pago', data: dataCP, borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', fill: true, tension: 0.3 }
+        ]
+      },
+      options: { plugins: { legend: { display: true } }, scales: { x: { display: false } } }
     });
-    // Doughnut chart: Status dos Serviços
-    if (servicosLabels.length && servicosData.length) {
-        new Chart(document.getElementById('pieChart'), {
-            type: 'doughnut',
-            data: {
-                labels: servicosLabels,
-                datasets: [{
-                    data: servicosData,
-                    backgroundColor: ['#007bff', '#ffc107', '#17a2b8', '#dc3545', '#28a745', '#6f42c1', '#fd7e14', '#20c997', '#343a40']
-                }]
-            }
-        });
-    }
-    // LocalStorage para lembrar filtros
-    document.querySelector('form').addEventListener('submit', () => {
-        localStorage.setItem('mesSelecionado', document.getElementById('mes').value);
-        localStorage.setItem('anoSelecionado', document.getElementById('ano').value);
+  } else {
+    document.getElementById('msgSemDadosCRCP').style.display = '';
+  }
+}
+
+// Gráfico de rosca - Categorias de Entradas
+if (document.getElementById('graficoCategoriasEntradas')) {
+  const labelsEnt = JSON.parse(document.getElementById('entrada-categorias-labels').textContent);
+  const dataEnt = JSON.parse(document.getElementById('entrada-categorias-data').textContent);
+  if (labelsEnt.length > 0 && dataEnt.length > 0) {
+    const ctxCatEnt = document.getElementById('graficoCategoriasEntradas').getContext('2d');
+    new Chart(ctxCatEnt, {
+      type: 'doughnut',
+      data: {
+        labels: labelsEnt,
+        datasets: [{
+          data: dataEnt,
+          backgroundColor: [
+            '#28a745', '#17a2b8', '#ffc107', '#6f42c1', '#fd7e14', '#20c997', '#007bff', '#dc3545', '#343a40', '#adb5bd'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
     });
-    window.onload = () => {
-        const mes = localStorage.getItem('mesSelecionado');
-        const ano = localStorage.getItem('anoSelecionado');
-        if (mes) document.getElementById('mes').value = mes;
-        if (ano) document.getElementById('ano').value = ano;
-    };
+  }
+}
+
+// Gráfico de rosca - Categorias de Saídas
+if (document.getElementById('graficoCategoriasSaidas')) {
+  const labelsSai = JSON.parse(document.getElementById('saida-categorias-labels').textContent);
+  const dataSai = JSON.parse(document.getElementById('saida-categorias-data').textContent);
+  if (labelsSai.length > 0 && dataSai.length > 0) {
+    const ctxCatSai = document.getElementById('graficoCategoriasSaidas').getContext('2d');
+    new Chart(ctxCatSai, {
+      type: 'doughnut',
+      data: {
+        labels: labelsSai,
+        datasets: [{
+          data: dataSai,
+          backgroundColor: [
+            '#dc3545', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997', '#007bff', '#28a745', '#343a40', '#adb5bd'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Serviços
+if (document.getElementById('graficoServicos')) {
+  const labelsServ = JSON.parse(document.getElementById('servicos-labels').textContent);
+  const dataServ = JSON.parse(document.getElementById('servicos-data').textContent);
+  if (labelsServ.length > 0 && dataServ.length > 0) {
+    const ctx2 = document.getElementById('graficoServicos').getContext('2d');
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: labelsServ,
+        datasets: [{
+          data: dataServ,
+          backgroundColor: [
+            '#6f42c1', '#17a2b8', '#ffc107', '#28a745', '#fd7e14', '#20c997', '#007bff', '#dc3545', '#343a40', '#adb5bd'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Contas a Pagar por categoria
+if (document.getElementById('graficoPagarCategoria')) {
+  const pagarPorCategoria = JSON.parse(document.getElementById('pagar-por-categoria').textContent);
+  if (pagarPorCategoria.length > 0) {
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsPagar = pagarPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
+    const dataPagar = pagarPorCategoria.map(item => item.qtd);
+    const ctxPagar = document.getElementById('graficoPagarCategoria').getContext('2d');
+    new Chart(ctxPagar, {
+      type: 'doughnut',
+      data: {
+        labels: labelsPagar,
+        datasets: [{
+          data: dataPagar,
+          backgroundColor: [
+            '#fd7e14', '#20c997', '#007bff', '#dc3545', '#343a40', '#adb5bd', '#ffc107', '#6f42c1', '#28a745', '#17a2b8'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Contas a Receber por categoria
+if (document.getElementById('graficoReceberCategoria')) {
+  const receberPorCategoria = JSON.parse(document.getElementById('receber-por-categoria').textContent);
+  if (receberPorCategoria.length > 0) {
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsReceber = receberPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
+    const dataReceber = receberPorCategoria.map(item => item.qtd);
+    const ctxReceber = document.getElementById('graficoReceberCategoria').getContext('2d');
+    new Chart(ctxReceber, {
+      type: 'doughnut',
+      data: {
+        labels: labelsReceber,
+        datasets: [{
+          data: dataReceber,
+          backgroundColor: [
+            '#20c997', '#007bff', '#fd7e14', '#dc3545', '#343a40', '#adb5bd', '#ffc107', '#6f42c1', '#28a745', '#17a2b8'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
 </script>
-{{ entrada_labels|json_script:"entrada_labels" }}
-{{ entrada_data|json_script:"entrada_data" }}
-{{ saida_data|json_script:"saida_data" }}
-{{ servicos_labels|json_script:"servicos_labels" }}
-{{ servicos_data|json_script:"servicos_data" }}
+
+<style>
+.small-card-green .card-body { background: #eafaf1; }
+.small-card-red .card-body { background: #faeaea; }
+.small-card-blue .card-body { background: #eaf0fa; }
+.small-card-purple .card-body { background: #f3eafa; }
+.small-card-yellow .card-body { background: #fffbe6; }
+.text-purple { color: #6f42c1; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ entrada_labels|json_script:"entrada-labels" }}
+{{ entrada_data|json_script:"entrada-data" }}
+{{ saida_data|json_script:"saida-data" }}
+{{ entrada_categorias_labels|json_script:"entrada-categorias-labels" }}
+{{ entrada_categorias_data|json_script:"entrada-categorias-data" }}
+{{ saida_categorias_labels|json_script:"saida-categorias-labels" }}
+{{ saida_categorias_data|json_script:"saida-categorias-data" }}
+{{ servicos_labels|json_script:"servicos-labels" }}
+{{ servicos_data|json_script:"servicos-data" }}
+{% if pagar_por_categoria %}
+  {{ pagar_por_categoria|json_script:"pagar-por-categoria" }}
+{% endif %}
+{% if receber_por_categoria %}
+  {{ receber_por_categoria|json_script:"receber-por-categoria" }}
+{% endif %}
+<script>
+// Gráfico de linhas Entradas/Saídas
+const ctx1 = document.getElementById('graficoEntradasSaidas').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels: JSON.parse(document.getElementById('entrada-labels').textContent),
+    datasets: [
+      { label: 'Entradas', data: JSON.parse(document.getElementById('entrada-data').textContent), borderColor: '#28a745', backgroundColor: 'rgba(40,167,69,0.1)', fill: true, tension: 0.3 },
+      { label: 'Saídas', data: JSON.parse(document.getElementById('saida-data').textContent), borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', fill: true, tension: 0.3 }
+    ]
+  },
+  options: { plugins: { legend: { display: true } }, scales: { x: { display: false } } }
+});
+
+// Gráfico de rosca - Categorias de Entradas
+if (document.getElementById('graficoCategoriasEntradas')) {
+  const labelsEnt = JSON.parse(document.getElementById('entrada-categorias-labels').textContent);
+  const dataEnt = JSON.parse(document.getElementById('entrada-categorias-data').textContent);
+  if (labelsEnt.length > 0 && dataEnt.length > 0) {
+    const ctxCatEnt = document.getElementById('graficoCategoriasEntradas').getContext('2d');
+    new Chart(ctxCatEnt, {
+      type: 'doughnut',
+      data: {
+        labels: labelsEnt,
+        datasets: [{
+          data: dataEnt,
+          backgroundColor: [
+            '#28a745', '#17a2b8', '#ffc107', '#6f42c1', '#fd7e14', '#20c997', '#007bff', '#dc3545', '#343a40', '#adb5bd'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Categorias de Saídas
+if (document.getElementById('graficoCategoriasSaidas')) {
+  const labelsSai = JSON.parse(document.getElementById('saida-categorias-labels').textContent);
+  const dataSai = JSON.parse(document.getElementById('saida-categorias-data').textContent);
+  if (labelsSai.length > 0 && dataSai.length > 0) {
+    const ctxCatSai = document.getElementById('graficoCategoriasSaidas').getContext('2d');
+    new Chart(ctxCatSai, {
+      type: 'doughnut',
+      data: {
+        labels: labelsSai,
+        datasets: [{
+          data: dataSai,
+          backgroundColor: [
+            '#dc3545', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997', '#007bff', '#28a745', '#343a40', '#adb5bd'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Serviços
+if (document.getElementById('graficoServicos')) {
+  const labelsServ = JSON.parse(document.getElementById('servicos-labels').textContent);
+  const dataServ = JSON.parse(document.getElementById('servicos-data').textContent);
+  if (labelsServ.length > 0 && dataServ.length > 0) {
+    const ctx2 = document.getElementById('graficoServicos').getContext('2d');
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: labelsServ,
+        datasets: [{
+          data: dataServ,
+          backgroundColor: [
+            '#6f42c1', '#17a2b8', '#ffc107', '#28a745', '#fd7e14', '#20c997', '#007bff', '#dc3545', '#343a40', '#adb5bd'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Contas a Pagar por categoria
+if (document.getElementById('graficoPagarCategoria')) {
+  const pagarPorCategoria = JSON.parse(document.getElementById('pagar-por-categoria').textContent);
+  if (pagarPorCategoria.length > 0) {
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsPagar = pagarPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
+    const dataPagar = pagarPorCategoria.map(item => item.qtd);
+    const ctxPagar = document.getElementById('graficoPagarCategoria').getContext('2d');
+    new Chart(ctxPagar, {
+      type: 'doughnut',
+      data: {
+        labels: labelsPagar,
+        datasets: [{
+          data: dataPagar,
+          backgroundColor: [
+            '#fd7e14', '#20c997', '#007bff', '#dc3545', '#343a40', '#adb5bd', '#ffc107', '#6f42c1', '#28a745', '#17a2b8'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+// Gráfico de rosca - Contas a Receber por categoria
+if (document.getElementById('graficoReceberCategoria')) {
+  const receberPorCategoria = JSON.parse(document.getElementById('receber-por-categoria').textContent);
+  if (receberPorCategoria.length > 0) {
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsReceber = receberPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
+    const dataReceber = receberPorCategoria.map(item => item.qtd);
+    const ctxReceber = document.getElementById('graficoReceberCategoria').getContext('2d');
+    new Chart(ctxReceber, {
+      type: 'doughnut',
+      data: {
+        labels: labelsReceber,
+        datasets: [{
+          data: dataReceber,
+          backgroundColor: [
+            '#20c997', '#007bff', '#fd7e14', '#dc3545', '#343a40', '#adb5bd', '#ffc107', '#6f42c1', '#28a745', '#17a2b8'
+          ]
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+</script>
 {% endblock %}
