@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'financeiro',
     'servicos',
     'import_export',
+    'rangefilter',
 ]
 
 MIDDLEWARE = [
