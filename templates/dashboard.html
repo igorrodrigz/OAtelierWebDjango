@@ -210,7 +210,22 @@ new Chart(ctx1, {
       { label: 'Saídas', data: JSON.parse(document.getElementById('saida-data').textContent), borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', fill: true, tension: 0.3 }
     ]
   },
-  options: { plugins: { legend: { display: true } }, scales: { x: { display: false } } }
+  options: {
+    plugins: {
+      legend: { display: true },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) label += ': ';
+            label += 'R$ ' + parseFloat(context.parsed.y).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+            return label;
+          }
+        }
+      }
+    },
+    scales: { x: { display: false } }
+  }
 });
 
 // Gráfico de linha - Contas a Receber x Contas a Pagar (pagos)
@@ -230,7 +245,22 @@ if (document.getElementById('graficoReceberPagarPagos')) {
           { label: 'Pago', data: dataCP, borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', fill: true, tension: 0.3 }
         ]
       },
-      options: { plugins: { legend: { display: true } }, scales: { x: { display: false } } }
+      options: {
+        plugins: {
+          legend: { display: true },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) label += ': ';
+                label += 'R$ ' + parseFloat(context.parsed.y).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+                return label;
+              }
+            }
+          }
+        },
+        scales: { x: { display: false } }
+      }
     });
   } else {
     document.getElementById('msgSemDadosCRCP').style.display = '';
@@ -254,7 +284,20 @@ if (document.getElementById('graficoCategoriasEntradas')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -276,7 +319,20 @@ if (document.getElementById('graficoCategoriasSaidas')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -298,7 +354,20 @@ if (document.getElementById('graficoServicos')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -324,7 +393,20 @@ if (document.getElementById('graficoPagarCategoria')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -350,7 +432,20 @@ if (document.getElementById('graficoReceberCategoria')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -393,7 +488,22 @@ new Chart(ctx1, {
       { label: 'Saídas', data: JSON.parse(document.getElementById('saida-data').textContent), borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', fill: true, tension: 0.3 }
     ]
   },
-  options: { plugins: { legend: { display: true } }, scales: { x: { display: false } } }
+  options: {
+    plugins: {
+      legend: { display: true },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) label += ': ';
+            label += 'R$ ' + parseFloat(context.parsed.y).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+            return label;
+          }
+        }
+      }
+    },
+    scales: { x: { display: false } }
+  }
 });
 
 // Gráfico de rosca - Categorias de Entradas
@@ -413,7 +523,20 @@ if (document.getElementById('graficoCategoriasEntradas')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -435,7 +558,20 @@ if (document.getElementById('graficoCategoriasSaidas')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -457,7 +593,20 @@ if (document.getElementById('graficoServicos')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -483,7 +632,20 @@ if (document.getElementById('graficoPagarCategoria')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
@@ -509,7 +671,20 @@ if (document.getElementById('graficoReceberCategoria')) {
           ]
         }]
       },
-      options: { plugins: { legend: { position: 'bottom' } } }
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                let value = context.parsed;
+                return label + ': R$ ' + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+              }
+            }
+          }
+        }
+      }
     });
   }
 }
