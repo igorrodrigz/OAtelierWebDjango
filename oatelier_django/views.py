@@ -7,28 +7,36 @@ import json
 
 def dashboard(request):
     # Filtros de mês/ano
-    mes = int(request.GET.get('mes', datetime.now().month))
+    mes = request.GET.get('mes')
+    if mes is None:
+        mes = f'{datetime.now().month:02}'
+    else:
+        mes = f'{int(mes):02}'
     ano = int(request.GET.get('ano', datetime.now().year))
 
     # Entradas e Saídas do mês/ano selecionado
-    entradas_mes = Entrada.objects.filter(data__month=mes, data__year=ano)
-    saidas_mes = Saida.objects.filter(data__month=mes, data__year=ano)
+    entradas_mes = Entrada.objects.filter(data__month=int(mes), data__year=ano)
+    saidas_mes = Saida.objects.filter(data__month=int(mes), data__year=ano)
     total_entradas = entradas_mes.aggregate(total=Sum('valor'))['total'] or 0
     total_saidas = saidas_mes.aggregate(total=Sum('valor'))['total'] or 0
     saldo_mes = total_entradas - total_saidas
+
+    # Ticket médio
+    ticket_medio = entradas_mes.aggregate(avg=Sum('valor')/Count('id'))['avg'] if entradas_mes.count() > 0 else 0
+    if not ticket_medio or ticket_medio == float('inf'):
+        ticket_medio = 0
+
+    # Quantidade de serviços
+    servicos_qtd = Servicos.objects.filter(data_entrada__month=int(mes), data_entrada__year=ano).count()
 
     # Listas principais
     principais_entradas = entradas_mes.order_by('-valor')[:5]
     principais_saidas = saidas_mes.order_by('-valor')[:5]
 
-    # Evolução anual
-    entrada_labels = []
-    entrada_data = []
-    saida_data = []
-    for m in range(1, 13):
-        entrada_labels.append(f"{m:02d}/{ano}")
-        entrada_data.append(float(Entrada.objects.filter(data__month=m, data__year=ano).aggregate(total=Sum('valor'))['total'] or 0))
-        saida_data.append(float(Saida.objects.filter(data__month=m, data__year=ano).aggregate(total=Sum('valor'))['total'] or 0))
+    # Gráfico de entradas/saídas do mês
+    entrada_labels = [e.data.strftime('%d/%m') for e in entradas_mes]
+    entrada_data = [float(e.valor) for e in entradas_mes]
+    saida_data = [float(s.valor) for s in saidas_mes]
 
     # Contas a pagar
     contas_pagar = ContaPagar.objects.filter(data_vencimento__year=ano)
@@ -61,18 +69,18 @@ def dashboard(request):
 
     # Filtros para selects
     meses = [
-        {'nome': 'Janeiro', 'valor': 1},
-        {'nome': 'Fevereiro', 'valor': 2},
-        {'nome': 'Março', 'valor': 3},
-        {'nome': 'Abril', 'valor': 4},
-        {'nome': 'Maio', 'valor': 5},
-        {'nome': 'Junho', 'valor': 6},
-        {'nome': 'Julho', 'valor': 7},
-        {'nome': 'Agosto', 'valor': 8},
-        {'nome': 'Setembro', 'valor': 9},
-        {'nome': 'Outubro', 'valor': 10},
-        {'nome': 'Novembro', 'valor': 11},
-        {'nome': 'Dezembro', 'valor': 12}
+        {'nome': 'Janeiro', 'valor': '01'},
+        {'nome': 'Fevereiro', 'valor': '02'},
+        {'nome': 'Março', 'valor': '03'},
+        {'nome': 'Abril', 'valor': '04'},
+        {'nome': 'Maio', 'valor': '05'},
+        {'nome': 'Junho', 'valor': '06'},
+        {'nome': 'Julho', 'valor': '07'},
+        {'nome': 'Agosto', 'valor': '08'},
+        {'nome': 'Setembro', 'valor': '09'},
+        {'nome': 'Outubro', 'valor': '10'},
+        {'nome': 'Novembro', 'valor': '11'},
+        {'nome': 'Dezembro', 'valor': '12'}
     ]
     anos = list(range(2020, datetime.now().year + 1))
 
@@ -81,28 +89,17 @@ def dashboard(request):
         'anos': anos,
         'mes_atual': mes,
         'ano_atual': ano,
-        'entrada_labels': json.dumps(entrada_labels),
-        'entrada_data': json.dumps(entrada_data),
-        'saida_data': json.dumps(saida_data),
+        'entrada_labels': entrada_labels,
+        'entrada_data': entrada_data,
+        'saida_data': saida_data,
         'total_entradas': total_entradas,
         'total_saidas': total_saidas,
         'saldo_mes': saldo_mes,
+        'servicos_qtd': servicos_qtd,
+        'ticket_medio': ticket_medio,
         'principais_entradas': principais_entradas,
         'principais_saidas': principais_saidas,
-        'total_pagar_pendentes': total_pagar_pendentes,
-        'total_pagar_pagas': total_pagar_pagas,
-        'proximas_pagar': proximas_pagar,
-        'pagar_por_categoria': list(pagar_por_categoria),
-        'total_receber_pendentes': total_receber_pendentes,
-        'total_receber_recebidas': total_receber_recebidas,
-        'proximas_receber': proximas_receber,
-        'receber_por_categoria': list(receber_por_categoria),
-        'pct_pagas': pct_pagas,
-        'pct_recebidas': pct_recebidas,
-        'vencendo_pagar': vencendo_pagar,
-        'vencendo_receber': vencendo_receber,
-        'servicos': list(servicos_status),
-        'servicos_labels': json.dumps(servicos_labels),
-        'servicos_data': json.dumps(servicos_data),
+        'servicos_labels': servicos_labels,
+        'servicos_data': servicos_data,
     })
 
