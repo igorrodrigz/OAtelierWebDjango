@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect
 from django.forms import modelformset_factory
 from django.contrib.auth.decorators import login_required
@@ -111,14 +110,22 @@ def dashboard(request):
     total_pagar_pendentes = contas_pagar.filter(pago=False).aggregate(total=Sum('valor'))['total'] or 0
     total_pagar_pagas = contas_pagar.filter(pago=True).aggregate(total=Sum('valor'))['total'] or 0
     proximas_pagar = contas_pagar.filter(pago=False, data_vencimento__gte=datetime.now()).order_by('data_vencimento')[:5]
-    pagar_por_categoria = contas_pagar.values('categoria').annotate(qtd=Count('id'))
+    # Agrupar por categoria: quantidade e soma dos valores não pagos
+    pagar_por_categoria = contas_pagar.filter(pago=False).values('categoria').annotate(
+        qtd=Count('id'),
+        total=Sum('valor')
+    )
 
     # Contas a receber
     contas_receber = ContaReceber.objects.filter(data_vencimento__year=ano)
     total_receber_pendentes = contas_receber.filter(recebido=False).aggregate(total=Sum('valor'))['total'] or 0
     total_receber_recebidas = contas_receber.filter(recebido=True).aggregate(total=Sum('valor'))['total'] or 0
     proximas_receber = contas_receber.filter(recebido=False, data_vencimento__gte=datetime.now()).order_by('data_vencimento')[:5]
-    receber_por_categoria = contas_receber.values('categoria').annotate(qtd=Count('id'))
+    # Agrupar por categoria: quantidade e soma dos valores não recebidos
+    receber_por_categoria = contas_receber.filter(recebido=False).values('categoria').annotate(
+        qtd=Count('id'),
+        total=Sum('valor')
+    )
 
     # Percentuais
     pct_pagas = (total_pagar_pagas / (total_pagar_pendentes + total_pagar_pagas) * 100) if (total_pagar_pendentes + total_pagar_pagas) > 0 else 0
@@ -175,5 +182,7 @@ def dashboard(request):
         'cr_pagos_labels': dias_labels,
         'cr_pagos_data': cr_pagos_data,
         'cp_pagos_data': cp_pagos_data,
+        'pagar_por_categoria': list(pagar_por_categoria),
+        'receber_por_categoria': list(receber_por_categoria),
     })
 

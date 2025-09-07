@@ -1,4 +1,3 @@
-
 {% extends 'admin/base_site.html' %}
 {% block content %}
 <div class="container-fluid py-3">
@@ -308,7 +307,10 @@ if (document.getElementById('graficoServicos')) {
 if (document.getElementById('graficoPagarCategoria')) {
   const pagarPorCategoria = JSON.parse(document.getElementById('pagar-por-categoria').textContent);
   if (pagarPorCategoria.length > 0) {
-    const labelsPagar = pagarPorCategoria.map(item => item.categoria || '—');
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsPagar = pagarPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
     const dataPagar = pagarPorCategoria.map(item => item.qtd);
     const ctxPagar = document.getElementById('graficoPagarCategoria').getContext('2d');
     new Chart(ctxPagar, {
@@ -331,7 +333,10 @@ if (document.getElementById('graficoPagarCategoria')) {
 if (document.getElementById('graficoReceberCategoria')) {
   const receberPorCategoria = JSON.parse(document.getElementById('receber-por-categoria').textContent);
   if (receberPorCategoria.length > 0) {
-    const labelsReceber = receberPorCategoria.map(item => item.categoria || '—');
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsReceber = receberPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
     const dataReceber = receberPorCategoria.map(item => item.qtd);
     const ctxReceber = document.getElementById('graficoReceberCategoria').getContext('2d');
     new Chart(ctxReceber, {
@@ -461,7 +466,10 @@ if (document.getElementById('graficoServicos')) {
 if (document.getElementById('graficoPagarCategoria')) {
   const pagarPorCategoria = JSON.parse(document.getElementById('pagar-por-categoria').textContent);
   if (pagarPorCategoria.length > 0) {
-    const labelsPagar = pagarPorCategoria.map(item => item.categoria || '—');
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsPagar = pagarPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
     const dataPagar = pagarPorCategoria.map(item => item.qtd);
     const ctxPagar = document.getElementById('graficoPagarCategoria').getContext('2d');
     new Chart(ctxPagar, {
@@ -484,7 +492,10 @@ if (document.getElementById('graficoPagarCategoria')) {
 if (document.getElementById('graficoReceberCategoria')) {
   const receberPorCategoria = JSON.parse(document.getElementById('receber-por-categoria').textContent);
   if (receberPorCategoria.length > 0) {
-    const labelsReceber = receberPorCategoria.map(item => item.categoria || '—');
+    // Mostra: Nome (Qtd) - R$ Total
+    const labelsReceber = receberPorCategoria.map(item =>
+      `${item.categoria || '—'} (${item.qtd}) - R$ ${parseFloat(item.total).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+    );
     const dataReceber = receberPorCategoria.map(item => item.qtd);
     const ctxReceber = document.getElementById('graficoReceberCategoria').getContext('2d');
     new Chart(ctxReceber, {

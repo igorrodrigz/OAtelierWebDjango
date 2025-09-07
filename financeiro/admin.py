@@ -1,3 +1,22 @@
+from django.contrib.admin import SimpleListFilter
+# Filtro mês/ano para o campo 'data' de Entrada
+class MesAnoDataEntradaFilter(SimpleListFilter):
+    title = 'Mês/Ano'
+    parameter_name = 'mes_ano'
+
+    def lookups(self, request, model_admin):
+        datas = model_admin.model.objects.order_by('-data').values_list('data', flat=True)
+        opcoes = set()
+        for data in datas:
+            opcoes.add((data.strftime('%Y-%m'), data.strftime('%m/%Y')))
+        return sorted(opcoes, reverse=True)
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            ano, mes = value.split('-')
+            return queryset.filter(data__year=ano, data__month=mes)
+        return queryset
 # Action para exportar entradas selecionadas para XLSX
 def exportar_entradas_xlsx(modeladmin, request, queryset):
     wb = openpyxl.Workbook()
@@ -159,7 +178,7 @@ class EntradaAdmin(admin.ModelAdmin):
     form = EntradaForm
     list_display = ('descricao', 'valor', 'data', 'categoria', 'atualizado_em')
     search_fields = ('descricao', 'categoria')
-    list_filter = (MesAnoDataFilter, 'categoria')
+    list_filter = ('categoria',)
     actions = [exportar_entradas_xlsx]
 
     def save_model(self, request, obj, form, change):
